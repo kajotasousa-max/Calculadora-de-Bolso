@@ -3,429 +3,544 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Engrenagens Cilíndricas — Calculadora de Bolso</title>
+<title>Engrenagens — Calculadora de Bolso · Melconian</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  /* ─── TOKENS ─── */
-  :root {
-    --bg:        #15181B;
-    --panel:     #1E2226;
-    --panel-deep:#181B1F;
-    --line:      #33393F;
-    --line-soft: #272C31;
-    --ink:       #E8EAED;
-    --mut:       #8B949E;
-    --dim:       #5C656E;
-    --amber:     #F2A93B;
-    --amber-d:   #C77F1A;
-    --lcd:       #D2E2AE;
-    --lcd-dim:   #B7C98F;
-    --lcd-ink:   #1C2613;
-    --lcd-mut:   #4A5A35;
-    --red:       #E06C5A;
-    --green:     #7FB069;
-    --fh: 'Chakra Petch', sans-serif;
-    --fm: 'IBM Plex Mono', monospace;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--fm);
-    min-height: 100vh;
-    padding: 18px 12px 48px;
-    display: flex;
-    justify-content: center;
-  }
-  .app { width: 100%; max-width: 680px; }
+:root{
+  --bg:#15181B;--panel:#1E2226;--panel-deep:#181B1F;
+  --line:#33393F;--line-soft:#272C31;
+  --ink:#E8EAED;--mut:#8B949E;--dim:#5C656E;
+  --amber:#F2A93B;--amber-d:#C77F1A;
+  --lcd:#D2E2AE;--lcd-dim:#B7C98F;--lcd-ink:#1C2613;--lcd-mut:#4A5A35;
+  --red:#E06C5A;--green:#7FB069;
+  --fh:'Chakra Petch',sans-serif;--fm:'IBM Plex Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--fm);min-height:100vh;padding:14px 10px 48px;display:flex;justify-content:center}
+.app{width:100%;max-width:720px}
 
-  /* ─── CABEÇALHO ─── */
-  header { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; margin-bottom: 14px; }
-  .hd-top { display: flex; align-items: stretch; }
-  .hd-icon { background: var(--amber); color: #1A1408; padding: 12px 14px; display: flex; align-items: center; }
-  .hd-text { flex: 1; background: var(--panel); padding: 10px 14px; }
-  .hd-title { font-family: var(--fh); font-weight: 700; font-size: 16px; letter-spacing: .04em; line-height: 1.2; }
-  .hd-sub   { font-family: var(--fh); font-size: 11px; letter-spacing: .16em; color: var(--amber); text-transform: uppercase; margin-top: 2px; }
-  .hd-meta  { display: flex; flex-wrap: wrap; border-top: 1px solid var(--line); background: var(--panel-deep); }
-  .hd-meta-cell { flex: 1 1 auto; padding: 6px 14px; border-right: 1px solid var(--line-soft); }
-  .hd-meta-cell:last-child { border-right: none; }
-  .hd-meta-k { font-family: var(--fh); font-size: 9px; letter-spacing: .14em; color: var(--dim); text-transform: uppercase; }
-  .hd-meta-v { font-size: 11px; color: var(--mut); white-space: nowrap; }
+/* HEADER */
+header{border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:12px}
+.hd-top{display:flex;align-items:stretch}
+.hd-icon{background:var(--amber);padding:12px 14px;display:flex;align-items:center}
+.hd-text{flex:1;background:var(--panel);padding:9px 14px}
+.hd-title{font-family:var(--fh);font-weight:700;font-size:15px;letter-spacing:.04em;line-height:1.2}
+.hd-sub{font-family:var(--fh);font-size:10px;letter-spacing:.16em;color:var(--amber);text-transform:uppercase;margin-top:2px}
+.hd-meta{display:flex;flex-wrap:wrap;border-top:1px solid var(--line);background:var(--panel-deep)}
+.hd-meta-cell{flex:1 1 auto;padding:5px 12px;border-right:1px solid var(--line-soft)}
+.hd-meta-cell:last-child{border-right:none}
+.hd-meta-k{font-family:var(--fh);font-size:8px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+.hd-meta-v{font-size:10px;color:var(--mut);white-space:nowrap}
 
-  /* ─── ABAS ─── */
-  nav { display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 2px; }
-  .tab {
-    flex: 1 0 auto; cursor: pointer;
-    background: var(--panel); color: var(--mut);
-    border: 1px solid var(--line); border-bottom: 3px solid var(--line);
-    border-radius: 5px; padding: 8px 10px 6px; min-width: 86px;
-    font-family: var(--fh); text-align: center; transition: background .15s;
-  }
-  .tab.ativo { background: var(--amber); color: #1A1408; border-color: var(--amber-d); border-bottom-color: var(--amber-d); }
-  .tab-nome { font-size: 12px; font-weight: 700; letter-spacing: .04em; }
-  .tab-sub  { font-size: 9px; letter-spacing: .14em; opacity: .75; text-transform: uppercase; }
+/* SELECTOR TIPO */
+.tipo-nav{display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;padding-bottom:3px;flex-wrap:nowrap}
+.tipo-btn{flex:0 0 auto;cursor:pointer;background:var(--panel);color:var(--mut);
+  border:1px solid var(--line);border-bottom:3px solid var(--line);border-radius:5px;
+  padding:7px 10px 5px;font-family:var(--fh);text-align:center;white-space:nowrap}
+.tipo-btn.ativo{background:var(--amber);color:#1A1408;border-color:var(--amber-d);border-bottom-color:var(--amber-d)}
+.tipo-btn .tn{font-size:11px;font-weight:700;letter-spacing:.03em;display:block}
+.tipo-btn .ts{font-size:8px;letter-spacing:.12em;opacity:.75;text-transform:uppercase;display:block}
 
-  /* ─── PAINEL ─── */
-  main { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 16px 14px 18px; }
-  .aba { display: none; }
-  .aba.ativa { display: block; }
+/* ABAS INTERNAS */
+.sub-nav{display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px}
+.sub-btn{flex:0 0 auto;cursor:pointer;background:var(--panel-deep);color:var(--dim);
+  border:1px solid var(--line-soft);border-radius:4px;padding:5px 10px;
+  font-family:var(--fh);font-size:10px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.sub-btn.ativo{background:rgba(242,169,59,.15);color:var(--amber);border-color:var(--amber-d)}
 
-  /* ─── LABEL SEÇÃO ─── */
-  .sec-label {
-    font-family: var(--fh); font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
-    color: var(--mut); margin-bottom: 5px;
-  }
+/* PAINEL */
+main{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 12px 16px}
+.tipo-panel{display:none}.tipo-panel.ativo{display:block}
+.sub-panel{display:none}.sub-panel.ativo{display:block}
 
-  /* ─── FÓRMULA ─── */
-  .formula {
-    font-family: var(--fm); font-size: 12.5px; color: var(--amber);
-    border: 1px solid var(--line-soft); border-left: 3px solid var(--amber-d);
-    background: var(--panel-deep); border-radius: 4px; padding: 8px 12px; margin-bottom: 14px;
-    overflow-x: auto; white-space: nowrap;
-  }
+/* ELEMENTOS BASE */
+.sec-label{font-family:var(--fh);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin-bottom:4px}
+.formula{font-family:var(--fm);font-size:11.5px;color:var(--amber);border:1px solid var(--line-soft);border-left:3px solid var(--amber-d);background:var(--panel-deep);border-radius:4px;padding:7px 11px;margin-bottom:12px;overflow-x:auto;white-space:nowrap}
+.fields{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:6px}
+.field{flex:1 1 110px;min-width:100px}
+input[type=number],input[type=text],select{width:100%;background:var(--panel-deep);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:8px 9px;font-family:var(--fm);font-size:14px;outline:none;transition:border-color .15s}
+input[type=number]:focus,input[type=text]:focus,select:focus{border-color:var(--amber)}
+input[type=number]::-webkit-inner-spin-button{opacity:.3}
 
-  /* ─── CAMPOS ─── */
-  .fields { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 6px; }
-  .field { flex: 1 1 120px; min-width: 110px; }
-  input[type=number], select {
-    width: 100%; background: var(--panel-deep); color: var(--ink);
-    border: 1px solid var(--line); border-radius: 4px;
-    padding: 9px 10px; font-family: var(--fm); font-size: 15px; outline: none;
-    transition: border-color .15s;
-  }
-  input[type=number]:focus, select:focus { border-color: var(--amber); }
-  input[type=text] {
-    width: 100%; background: var(--panel-deep); color: var(--ink);
-    border: 1px solid var(--line); border-radius: 4px;
-    padding: 9px 10px; font-family: var(--fm); font-size: 14px; outline: none;
-    transition: border-color .15s;
-  }
-  input[type=text]:focus { border-color: var(--amber); }
-  input[type=number]::-webkit-inner-spin-button { opacity: .3; }
+/* LCD */
+.lcd{background:linear-gradient(180deg,var(--lcd),var(--lcd-dim));border-radius:6px;border:1px solid #0E1408;box-shadow:inset 0 2px 10px rgba(20,30,8,.45),inset 0 -1px 0 rgba(255,255,255,.35);padding:11px 13px;margin-top:12px;position:relative}
+.lcd-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px dashed rgba(28,38,19,.25)}
+.lcd-row:last-of-type{border-bottom:none}
+.lcd-k{font-family:var(--fh);font-size:10px;letter-spacing:.05em;color:var(--lcd-mut);text-transform:uppercase}
+.lcd-v{font-family:var(--fm);font-weight:600;font-size:15px;color:var(--lcd-ink);white-space:nowrap}
+.lcd-u{font-size:10px;font-weight:400;color:var(--lcd-mut);margin-left:3px}
+.lcd-note{font-family:var(--fm);font-size:10px;color:var(--lcd-mut);margin-top:7px;line-height:1.45}
+.lcd-stamp{position:absolute;top:9px;right:11px;font-family:var(--fh);font-weight:700;font-size:10px;letter-spacing:.18em;padding:2px 7px;border-radius:3px;transform:rotate(-3deg);text-transform:uppercase;pointer-events:none}
+.lcd-stamp.ok{border:2px solid #3E6B2A;color:#3E6B2A}
+.lcd-stamp.fail{border:2px solid #8C2F1F;color:#8C2F1F}
 
-  /* ─── VISOR LCD ─── */
-  .lcd {
-    background: linear-gradient(180deg, var(--lcd), var(--lcd-dim));
-    border-radius: 6px; border: 1px solid #0E1408;
-    box-shadow: inset 0 2px 10px rgba(20,30,8,.45), inset 0 -1px 0 rgba(255,255,255,.35);
-    padding: 12px 14px; margin-top: 14px; position: relative;
-  }
-  .lcd-row {
-    display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
-    padding: 4px 0; border-bottom: 1px dashed rgba(28,38,19,.25);
-  }
-  .lcd-row:last-of-type { border-bottom: none; }
-  .lcd-k { font-family: var(--fh); font-size: 11px; letter-spacing: .06em; color: var(--lcd-mut); text-transform: uppercase; }
-  .lcd-v { font-family: var(--fm); font-weight: 600; font-size: 16px; color: var(--lcd-ink); white-space: nowrap; }
-  .lcd-u { font-size: 11px; font-weight: 400; color: var(--lcd-mut); margin-left: 4px; }
-  .lcd-note { font-family: var(--fm); font-size: 10.5px; color: var(--lcd-mut); margin-top: 8px; line-height: 1.45; }
-  .lcd-stamp {
-    position: absolute; top: 10px; right: 12px;
-    font-family: var(--fh); font-weight: 700; font-size: 11px; letter-spacing: .18em;
-    padding: 3px 8px; border-radius: 3px; transform: rotate(-3deg); text-transform: uppercase;
-    pointer-events: none;
-  }
-  .lcd-stamp.ok { border: 2px solid #3E6B2A; color: #3E6B2A; }
-  .lcd-stamp.fail { border: 2px solid #8C2F1F; color: #8C2F1F; }
+/* TABELAS */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line-soft);border-radius:4px;margin-top:10px}
+.tbl{border-collapse:collapse;width:100%;font-family:var(--fm);font-size:11px}
+.tbl th{padding:5px 7px;color:var(--mut);font-weight:400;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+.tbl td{padding:6px 7px;color:var(--ink);text-align:center;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+.tbl td.am{color:var(--amber)}.tbl td.lft{text-align:left}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr.hl td{background:rgba(242,169,59,.14)}
+.tbl-scroll{max-height:280px;overflow-y:auto;border:1px solid var(--line-soft);border-radius:4px;margin-top:10px}
+.tbl-scroll table{border-collapse:collapse;width:100%;font-family:var(--fm);font-size:11px}
+.tbl-scroll thead th{position:sticky;top:0;background:var(--panel);padding:6px 9px;color:var(--mut);font-weight:400;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+.tbl-scroll thead th.c{text-align:center}
+.tbl-scroll tbody td{padding:6px 9px;border-bottom:1px solid var(--line-soft)}
+.tbl-scroll tbody td.am{color:var(--amber);text-align:center}
+.app-grupo{font-size:9px;color:var(--dim);display:block}
+.app-nome{color:var(--ink)}
+.tr-clic{cursor:pointer}.tr-clic:hover td{background:rgba(242,169,59,.07)}
+.tr-clic.sel td{background:rgba(242,169,59,.14)}
 
-  /* ─── AVISO ─── */
-  .aviso { color: var(--red); font-size: 11px; margin-top: 6px; }
+.sep{height:18px}
 
-  /* ─── REFERÊNCIA ─── */
-  .ref { font-size: 10px; color: var(--dim); margin-top: 10px; line-height: 1.5; }
+/* FOLGA */
+.folga-box{display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;
+  background:var(--panel-deep);border:1px solid var(--line-soft);border-left:3px solid var(--amber-d);border-radius:4px;flex-wrap:wrap}
+.folga-box label{font-family:var(--fh);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);white-space:nowrap}
+.folga-box input[type=number]{width:90px;min-width:70px;flex:0 0 auto;font-size:13px;padding:6px 8px}
+.folga-tag{font-family:var(--fm);font-size:9px;color:var(--dim);flex:1 1 auto;min-width:120px}
+.folga-reset{background:transparent;border:1px solid var(--line);color:var(--dim);border-radius:3px;
+  padding:4px 8px;font-family:var(--fh);font-size:9px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;white-space:nowrap}
+.folga-reset:hover{border-color:var(--amber);color:var(--amber)}
+.ref{font-size:9px;color:var(--dim);margin-top:8px;line-height:1.5}
+.aviso{color:var(--red);font-size:10px;margin-top:5px}
+.hidden{display:none!important}
+.btn-sec{margin-top:10px;background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:4px;padding:6px 11px;font-family:var(--fh);font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.btn-sec:hover{border-color:var(--amber);color:var(--amber)}
 
-  /* ─── TABELAS ─── */
-  .tbl-wrap { overflow-x: auto; border: 1px solid var(--line-soft); border-radius: 4px; margin-top: 12px; }
-  .tbl { border-collapse: collapse; width: 100%; font-family: var(--fm); font-size: 12px; }
-  .tbl th { padding: 6px 8px; color: var(--mut); font-weight: 400; border-bottom: 1px solid var(--line); text-align: center; white-space: nowrap; }
-  .tbl td { padding: 7px 8px; color: var(--ink); text-align: center; border-bottom: 1px solid var(--line-soft); white-space: nowrap; }
-  .tbl td.amber { color: var(--amber); }
-  .tbl td.left { text-align: left; }
-  .tbl tr:last-child td { border-bottom: none; }
-  .tbl tr.hl td { background: rgba(242,169,59,.14); }
-  .tbl tr.clic { cursor: pointer; }
-  .tbl tr.clic:hover td { background: rgba(242,169,59,.08); }
-  .tbl tr.clic.sel td { background: rgba(242,169,59,.14); }
-  .tbl-scroll { max-height: 300px; overflow-y: auto; border: 1px solid var(--line-soft); border-radius: 4px; margin-top: 12px; }
-  .tbl-scroll table { border-collapse: collapse; width: 100%; font-family: var(--fm); font-size: 12px; }
-  .tbl-scroll thead th { position: sticky; top: 0; background: var(--panel); padding: 7px 10px; color: var(--mut); font-weight: 400; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
-  .tbl-scroll thead th.c { text-align: center; }
-  .tbl-scroll tbody td { padding: 7px 10px; border-bottom: 1px solid var(--line-soft); }
-  .tbl-scroll tbody td.amber { color: var(--amber); text-align: center; }
-  .tbl-scroll tbody .app-grupo { font-size: 10px; color: var(--dim); display: block; }
-  .tbl-scroll tbody .app-nome  { color: var(--ink); }
-  .sep { height: 22px; }
-
-  /* ─── BOTÃO SECUNDÁRIO ─── */
-  .btn-sec {
-    margin-top: 12px; background: transparent; border: 1px solid var(--line); color: var(--mut);
-    border-radius: 4px; padding: 7px 12px; font-family: var(--fh); font-size: 11px;
-    letter-spacing: .1em; text-transform: uppercase; cursor: pointer;
-  }
-  .btn-sec:hover { border-color: var(--amber); color: var(--amber); }
-  .hidden { display: none; }
-
-  /* ─── FOOTER ─── */
-  footer { font-size: 10px; color: var(--dim); margin-top: 14px; line-height: 1.6; text-align: center; }
-
-  ::-webkit-scrollbar { height: 8px; width: 8px; }
-  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
+footer{font-size:9px;color:var(--dim);margin-top:12px;line-height:1.6;text-align:center}
+::-webkit-scrollbar{height:7px;width:7px}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+::-webkit-scrollbar-track{background:transparent}
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- CABEÇALHO -->
-  <header>
-    <div class="hd-top">
-      <div class="hd-icon">
-        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm9 3.5c0-.6-.05-1.18-.16-1.74l2.05-1.6-2-3.46-2.42 1.02a8.9 8.9 0 0 0-3-1.74L13.99 2h-4l-.48 2.58a8.9 8.9 0 0 0-3 1.74L4.1 5.3l-2 3.46 2.05 1.6A9 9 0 0 0 4 12c0 .6.05 1.18.16 1.74L2.1 15.34l2 3.46 2.42-1.02a8.9 8.9 0 0 0 3 1.74L10 22h4l.48-2.58a8.9 8.9 0 0 0 3-1.74l2.42 1.02 2-3.46-2.05-1.6c.1-.56.15-1.14.15-1.74Z" fill="#1A1408"/>
-          <circle cx="12" cy="12" r="2" fill="#F2A93B"/>
-        </svg>
-      </div>
-      <div class="hd-text">
-        <div class="hd-title">ENGRENAGENS CILÍNDRICAS</div>
-        <div class="hd-sub">Dentes retos · Calculadora de bolso</div>
-      </div>
+<header>
+  <div class="hd-top">
+    <div class="hd-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+        <path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm9 3.5c0-.6-.05-1.18-.16-1.74l2.05-1.6-2-3.46-2.42 1.02a8.9 8.9 0 0 0-3-1.74L13.99 2h-4l-.48 2.58a8.9 8.9 0 0 0-3 1.74L4.1 5.3l-2 3.46 2.05 1.6A9 9 0 0 0 4 12c0 .6.05 1.18.16 1.74L2.1 15.34l2 3.46 2.42-1.02a8.9 8.9 0 0 0 3 1.74L10 22h4l.48-2.58a8.9 8.9 0 0 0 3-1.74l2.42 1.02 2-3.46-2.05-1.6c.1-.56.15-1.14.15-1.74Z" fill="#1A1408"/>
+        <circle cx="12" cy="12" r="2" fill="#F2A93B"/>
+      </svg>
     </div>
-    <div class="hd-meta">
-      <div class="hd-meta-cell"><div class="hd-meta-k">Fonte</div><div class="hd-meta-v">Melconian — Cap. 6</div></div>
-      <div class="hd-meta-cell"><div class="hd-meta-k">Normas</div><div class="hd-meta-v">DIN 862 · 867 · 780</div></div>
-      <div class="hd-meta-cell"><div class="hd-meta-k">α</div><div class="hd-meta-v">20°</div></div>
-      <div class="hd-meta-cell"><div class="hd-meta-k">Unid.</div><div class="hd-meta-v">mm · N/mm²</div></div>
+    <div class="hd-text">
+      <div class="hd-title">CALCULADORA DE ENGRENAGENS</div>
+      <div class="hd-sub">Cilíndricas · Cônicas · Sem-Fim · Estrias</div>
     </div>
-  </header>
+  </div>
+  <div class="hd-meta">
+    <div class="hd-meta-cell"><div class="hd-meta-k">Fonte</div><div class="hd-meta-v">Melconian Cap. 6–10</div></div>
+    <div class="hd-meta-cell"><div class="hd-meta-k">Normas</div><div class="hd-meta-v">DIN 862·867·780·3975</div></div>
+    <div class="hd-meta-cell"><div class="hd-meta-k">α</div><div class="hd-meta-v">20° (padrão)</div></div>
+    <div class="hd-meta-cell"><div class="hd-meta-k">Unid.</div><div class="hd-meta-v">mm · N/mm²</div></div>
+  </div>
+</header>
 
-  <!-- ABAS -->
-  <nav id="nav">
-    <button class="tab ativo" data-aba="geo"><div class="tab-nome">Geometria</div><div class="tab-sub">DIN 867</div></button>
-    <button class="tab" data-aba="q"><div class="tab-nome">Fator q</div><div class="tab-sub">6.12</div></button>
-    <button class="tab" data-aba="mat"><div class="tab-nome">Materiais</div><div class="tab-sub">HB · σ</div></button>
-    <button class="tab" data-aba="phi"><div class="tab-nome">Fator φ</div><div class="tab-sub">AGMA</div></button>
-    <button class="tab" data-aba="ver"><div class="tab-nome">Verificação</div><div class="tab-sub">p · σ</div></button>
-  </nav>
-
-  <!-- PAINEL PRINCIPAL -->
-  <main>
-
-    <!-- ═══════════════════════════════════════════ ABA 1 — GEOMETRIA -->
-    <div class="aba ativa" id="aba-geo">
-      <div class="formula">Z = d₀/m &nbsp;·&nbsp; t₀ = m·π &nbsp;·&nbsp; h = 2m &nbsp;·&nbsp; h_z = 2,25m &nbsp;·&nbsp; i = Z₂/Z₁ &nbsp;·&nbsp; Cc = (d₀₁ + d₀₂) / 2</div>
-      <div class="fields">
-        <div class="field">
-          <div class="sec-label">Módulo m — DIN 780 [mm]</div>
-          <select id="geo-m"></select>
-          <div class="aviso hidden" id="geo-aviso">⚠ Módulo fora da série DIN 780.</div>
-        </div>
-        <div class="field">
-          <div class="sec-label">Dentes do pinhão Z₁</div>
-          <input type="number" id="geo-z1" value="17" min="1" placeholder="ex.: 17">
-        </div>
-        <div class="field">
-          <div class="sec-label">Dentes da coroa Z₂</div>
-          <input type="number" id="geo-z2" value="40" min="1" placeholder="ex.: 40">
-        </div>
-        <div class="field">
-          <div class="sec-label">Rotação n₁ [rpm] — opcional</div>
-          <input type="number" id="geo-n1" min="0" placeholder="ex.: 1750">
-        </div>
-      </div>
-      <div class="lcd" id="geo-lcd"></div>
-      <div class="ref">Fonte: Melconian, itens 6.1–6.2 (p. 95–96) e 6.6/6.7 (p. 99) — DIN 862, DIN 867 e DIN 780.</div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════ ABA 2 — FATOR q -->
-    <div class="aba" id="aba-q">
-      <div class="formula">q = f(Z) — valores intermediários por interpolação linear (ex. do livro: Z=31 → q=3,0501)</div>
-      <div class="fields">
-        <div class="field">
-          <div class="sec-label">Tipo de engrenamento</div>
-          <select id="q-tipo">
-            <option value="ext">Externo</option>
-            <option value="int">Interno</option>
-          </select>
-        </div>
-        <div class="field">
-          <div class="sec-label">Número de dentes Z</div>
-          <input type="number" id="q-z" value="31" min="1" placeholder="ex.: 31">
-        </div>
-      </div>
-      <div class="lcd" id="q-lcd"></div>
-      <div class="tbl-wrap" id="q-tbl-wrap">
-        <table class="tbl" id="q-tbl"></table>
-      </div>
-      <div class="ref" id="q-ref"></div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════ ABA 3 — MATERIAIS -->
-    <div class="aba" id="aba-mat">
-      <div class="fields">
-        <div class="field" style="flex:2 1 200px">
-          <div class="sec-label">Referência do material</div>
-          <select id="mat-ref"></select>
-        </div>
-      </div>
-      <div class="lcd" id="mat-lcd"></div>
-      <div id="mat-comp-wrap" class="tbl-wrap hidden">
-        <table class="tbl" id="mat-comp"></table>
-      </div>
-      <div class="ref" id="mat-ref-txt">Fonte: Melconian, itens 6.5 e 6.14 (p. 98 e 110).</div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════ ABA 4 — FATOR φ AGMA -->
-    <div class="aba" id="aba-phi">
-      <div class="formula">φ — Tabela 1: acionamento por motores elétricos ou turbinas (10h / 24h)</div>
-      <div class="field" style="margin-bottom:12px">
-        <div class="sec-label">Buscar aplicação</div>
-        <input type="text" id="phi-busca" placeholder="ex.: bomba, britador, calandra…">
-      </div>
-      <div class="lcd hidden" id="phi-lcd"></div>
-      <div class="tbl-scroll" id="phi-tbl-wrap">
-        <table id="phi-tbl">
-          <thead><tr><th>Aplicação</th><th class="c">10 h</th><th class="c">24 h</th></tr></thead>
-          <tbody id="phi-tbody"></tbody>
-        </table>
-      </div>
-      <button class="btn-sec" id="phi-t2-btn">Ver Tabela 2 — motores a explosão</button>
-      <div class="hidden" id="phi-t2">
-        <div class="tbl-wrap" style="margin-top:10px">
-          <table class="tbl">
-            <thead>
-              <tr><th>Elétrico 10h</th><th>Elétrico 3h</th><th>Explosão 3h</th><th>Explosão 10h</th><th>Explosão 24h</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>1,00</td><td class="amber">0,50</td><td class="amber">1,00</td><td class="amber">1,25</td><td class="amber">1,50</td></tr>
-              <tr><td>1,25</td><td class="amber">1,00</td><td class="amber">1,25</td><td class="amber">1,50</td><td class="amber">1,75</td></tr>
-              <tr><td>1,75</td><td class="amber">1,50</td><td class="amber">1,75</td><td class="amber">2,00</td><td class="amber">2,25</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="ref" style="margin-top:8px">Localize o φ de 10h (Tabela 1) na 1ª coluna e leia o fator convertido. Premissa: aplicação isenta de vibrações críticas; picos ≤ 200% da carga normal.</div>
-      </div>
-      <div class="ref">Fonte: Melconian, item 6.13 (p. 103–107).</div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════ ABA 5 — VERIFICAÇÃO -->
-    <div class="aba" id="aba-ver">
-      <div class="sec-label">Critério de desgaste — pressão admissível (item 6.4)</div>
-      <div class="formula">p_adm = 0,487·HB / W^(1/6) [N/mm²] &nbsp;·&nbsp; W = 60·n_p·h / 10⁶</div>
-      <div class="fields">
-        <div class="field">
-          <div class="sec-label">Dureza HB [N/mm²]</div>
-          <input type="number" id="v-hb" value="1800" min="0" placeholder="ex.: 1800">
-        </div>
-        <div class="field">
-          <div class="sec-label">Rotação do pinhão n_p [rpm]</div>
-          <input type="number" id="v-np" value="1750" min="0" placeholder="ex.: 1750">
-        </div>
-        <div class="field">
-          <div class="sec-label">Duração do par h [horas]</div>
-          <input type="number" id="v-h" value="10000" min="0" placeholder="ex.: 10000">
-        </div>
-      </div>
-      <div class="lcd" id="v-lcd1"></div>
-
-      <div class="sep"></div>
-      <div class="sec-label">Critério de resistência — tensão no pé do dente (item 6.11)</div>
-      <div class="formula">σ_máx = F_t · q · φ / (b · m) ≤ σ_material</div>
-      <div class="fields">
-        <div class="field">
-          <div class="sec-label">Força tangencial F_t [N]</div>
-          <input type="number" id="v-ft" min="0" placeholder="N">
-        </div>
-        <div class="field">
-          <div class="sec-label">Fator de forma q</div>
-          <input type="number" id="v-q" min="0" step="0.0001" placeholder="aba q">
-        </div>
-        <div class="field">
-          <div class="sec-label">Fator de serviço φ</div>
-          <input type="number" id="v-phi" min="0" step="0.01" placeholder="aba φ">
-        </div>
-        <div class="field">
-          <div class="sec-label">Largura do dente b [mm]</div>
-          <input type="number" id="v-b" min="0" placeholder="mm">
-        </div>
-        <div class="field">
-          <div class="sec-label">Módulo m [mm]</div>
-          <input type="number" id="v-m" min="0" placeholder="mm">
-        </div>
-        <div class="field" style="flex:2 1 180px">
-          <div class="sec-label">Material (σ — Tabela 4)</div>
-          <select id="v-mat"></select>
-        </div>
-      </div>
-      <div class="lcd" id="v-lcd2"></div>
-      <div class="ref">Fonte: Melconian, itens 6.4, 6.11 e 6.14 (p. 98, 102 e 110).</div>
-    </div>
-
-  </main>
-
-  <footer>
-    Dados transcritos de MELCONIAN, S. <em>Elementos de Máquinas</em>, Cap. 6 — Engrenagens Cilíndricas de Dentes Retos (p. 95–113).
-    Ferramenta de consulta acadêmica; confirme os valores no livro para uso em projeto.
-  </footer>
+<!-- SELETOR TIPO -->
+<div class="tipo-nav" id="tipo-nav">
+  <button class="tipo-btn ativo" data-tipo="cil-ret"><span class="tn">Cil. Retas</span><span class="ts">Cap. 6</span></button>
+  <button class="tipo-btn" data-tipo="cil-hel"><span class="tn">Cil. Helicoidais</span><span class="ts">Cap. 7</span></button>
+  <button class="tipo-btn" data-tipo="conica"><span class="tn">Cônicas</span><span class="ts">Cap. 8</span></button>
+  <button class="tipo-btn" data-tipo="semfim"><span class="tn">Sem-Fim</span><span class="ts">Cap. 9</span></button>
+  <button class="tipo-btn" data-tipo="estria"><span class="tn">Estrias</span><span class="ts">Cap. 10</span></button>
+  <button class="tipo-btn" data-tipo="materiais"><span class="tn">Materiais</span><span class="ts">6.5·6.6·6.14</span></button>
+  <button class="tipo-btn" data-tipo="agma"><span class="tn">Fator φ AGMA</span><span class="ts">Tab. 1·2</span></button>
 </div>
 
+<main>
+
+<!-- ████████████████ CIL. RETAS ████████████████ -->
+<div class="tipo-panel ativo" id="tp-cil-ret">
+  <div class="sub-nav">
+    <button class="sub-btn ativo" data-sub="cr-geo">Geometria</button>
+    <button class="sub-btn" data-sub="cr-q">Fator q</button>
+    <button class="sub-btn" data-sub="cr-ver">Verificação</button>
+  </div>
+
+  <!-- GEOMETRIA -->
+  <div class="sub-panel ativo" id="sp-cr-geo">
+    <div class="formula">Z=d₀/m · t₀=m·π · h=2m · h_z=2,2m · Cc=(d₀₁+d₀₂)/2 · i=Z₂/Z₁</div>
+    <div class="fields">
+      <div class="field"><div class="sec-label">Módulo m — DIN 780</div><select id="cr-m"></select></div>
+      <div class="field"><div class="sec-label">Dentes pinhão Z₁</div><input type="number" id="cr-z1" value="17" min="1"></div>
+      <div class="field"><div class="sec-label">Dentes coroa Z₂</div><input type="number" id="cr-z2" value="40" min="1"></div>
+      <div class="field"><div class="sec-label">Rotação n₁ [rpm]</div><input type="number" id="cr-n1" min="0" placeholder="opcional"></div>
+    </div>
+    <div class="folga-box">
+      <label>Folga radial Sₖ [mm]</label>
+      <input type="number" id="cr-sk" min="0" step="0.001" placeholder="0,2·m">
+      <button class="folga-reset" onclick="crResetSk()">DIN 867 (0,2·m)</button>
+      <label style="margin-left:6px">Ângulo de pressão α [°]</label>
+      <input type="number" id="cr-alpha" value="20" min="1" max="45" step="0.5" style="width:72px">
+      <button class="folga-reset" onclick="document.getElementById('cr-alpha').value=20;crGeoCalc()">DIN 867 (20°)</button>
+      <span class="folga-tag">Afeta F_r=F_t·tg α · DIN 867: α=20° (padrão)</span>
+    </div>
+    <div class="lcd" id="cr-geo-lcd"></div>
+    <div class="ref">Melconian §6.1–6.2 (p.95–96) · DIN 862/867 · DIN 780</div>
+  </div>
+
+  <!-- FATOR q -->
+  <div class="sub-panel" id="sp-cr-q">
+    <div class="formula">q=f(Z) — interpolação linear conforme §6.12 (ex. Z=31 → q=3,0501)</div>
+    <div class="fields">
+      <div class="field"><div class="sec-label">Engrenamento</div>
+        <select id="cr-q-tipo"><option value="ext">Externo</option><option value="int">Interno</option></select></div>
+      <div class="field"><div class="sec-label">Nº de dentes Z</div><input type="number" id="cr-q-z" value="31" min="1"></div>
+    </div>
+    <div class="lcd" id="cr-q-lcd"></div>
+    <div class="tbl-wrap"><table class="tbl" id="cr-q-tbl"></table></div>
+    <div class="ref" id="cr-q-ref"></div>
+  </div>
+
+  <!-- VERIFICAÇÃO -->
+  <div class="sub-panel" id="sp-cr-ver">
+    <div class="sec-label">Desgaste — pressão admissível §6.4</div>
+    <div class="formula">p_adm = 0,487·HB / W^(1/6) · W = 60·n_p·h / 10⁶</div>
+    <div class="fields">
+      <div class="field"><div class="sec-label">HB [N/mm²]</div><input type="number" id="cr-hb" value="1800" min="0"></div>
+      <div class="field"><div class="sec-label">n_p [rpm]</div><input type="number" id="cr-np" value="1750" min="0"></div>
+      <div class="field"><div class="sec-label">Duração h [h]</div><input type="number" id="cr-dh" value="10000" min="0"></div>
+    </div>
+    <div class="lcd" id="cr-v1-lcd"></div>
+    <div class="sep"></div>
+    <div class="sec-label">Resistência — tensão no pé do dente §6.11</div>
+    <div class="formula">σ_máx = F_t·q·φ / (b·m) ≤ σ_material</div>
+    <div class="fields">
+      <div class="field"><div class="sec-label">F_t [N]</div><input type="number" id="cr-ft" min="0" placeholder="N"></div>
+      <div class="field"><div class="sec-label">q</div><input type="number" id="cr-qv" min="0" step="0.0001" placeholder="aba q"></div>
+      <div class="field"><div class="sec-label">φ (AGMA)</div><input type="number" id="cr-phi" min="0" step="0.01" placeholder="aba φ"></div>
+      <div class="field"><div class="sec-label">b [mm]</div><input type="number" id="cr-b" min="0"></div>
+      <div class="field"><div class="sec-label">m [mm]</div><input type="number" id="cr-mv" min="0"></div>
+      <div class="field" style="flex:2 1 170px"><div class="sec-label">Material</div><select id="cr-mat"></select></div>
+    </div>
+    <div class="lcd" id="cr-v2-lcd"></div>
+    <div class="ref">Melconian §6.4, 6.11, 6.14 (p.98, 102, 110)</div>
+  </div>
+</div><!-- /cil-ret -->
+
+<!-- ████████████████ CIL. HELICOIDAIS ████████████████ -->
+<div class="tipo-panel" id="tp-cil-hel">
+  <div class="sub-nav">
+    <button class="sub-btn ativo" data-sub="ch-geo">Geometria</button>
+    <button class="sub-btn" data-sub="ch-ver">Verificação</button>
+  </div>
+
+  <div class="sub-panel ativo" id="sp-ch-geo">
+    <div class="formula">d₀=m_n·Z/cos β · t₀n=m_n·π · h=2·m_n · Cc=(d₀₁+d₀₂)/2 · i=Z₂/Z₁</div>
+    <div class="fields">
+      <div class="field"><div class="sec-label">Módulo normal m_n — DIN 780</div><select id="ch-mn"></select></div>
+      <div class="field"><div class="sec-label">Ângulo hélice β [°]</div><input type="number" id="ch-beta" value="15" min="5" max="45" step="1"></div>
+      <div class="field"><div class="sec-label">Dentes pinhão Z₁</div><input type="number" id="ch-z1" value="17" min="1"></div>
+      <div class="field"><div class="sec-label">Dentes coroa Z₂</div><input type="number" id="ch-z2" value="40" min="1"></div>
+      <div class="field"><div class="sec-label">Rotação n₁ [rpm]</div><input type="number" id="ch-n1" min="0" placeholder="opcional"></div>
+    </div>
+    <div class="folga-box">
+      <label>Folga radial Sₖ [mm]</label>
+      <input type="number" id="ch-sk" min="0" step="0.001" placeholder="0,2·m_n">
+      <button class="folga-reset" onclick="chResetSk()">DIN 867 (0,2·m_n)</button>
+      <label style="margin-left:6px">Ângulo de pressão normal αn [°]</label>
+      <input type="number" id="ch-alpha" value="20" min="1" max="45" step="0.5" style="width:72px">
+      <button class="folga-reset" onclick="document.getElementById('ch-alpha').value=20;chGeoCalc()">DIN 867 (20°)</button>
+      <span class="folga-tag">αt=arctg(tg αn/cos β) · DIN 867: αn=20°</span>
+    </div>
+    <div class="lcd" id="ch-geo-lcd"></div>
+    <div class="ref">Melconian §7.1 (p.131–143) · m_n = módulo normal · m_t = m_n/cos β (módulo transversal)</div>
+  </div>
+
+  <div class="sub-panel" id="sp-ch-ver">
+    <div class="sec-label">Verificação — resistência à flexão §7</div>
+    <div class="formula">σ_máx = F_t·q·φ / (b·m_n) ≤ σ_material</div>
+    <div class="fields">
+      <div class="field"><div class="sec-label">F_t [N]</div><input type="number" id="ch-ft" min="0" placeholder="N"></div>
+      <div class="field"><div class="sec-label">q (fator forma Z_v)</div><input type="number" id="ch-qv" min="0" step="0.0001" placeholder="Z_v=Z/cos³β"></div>
+      <div class="field"><div class="sec-label">φ (AGMA)</div><input type="number" id="ch-phi" min="0" step="0.01"></div>
+      <div class="field"><div class="sec-label">b [mm]</div><input type="number" id="ch-b" min="0"></div>
+      <div class="field"><div class="sec-label">m_n [mm]</div><input type="number" id="ch-mn2" min="0"></div>
+      <div class="field" style="flex:2 1 170px"><div class="sec-label">Material</div><select id="ch-mat"></select></div>
+    </div>
+    <div class="sec-label" style="margin-top:10px">Nº virtual de dentes Z_v = Z / cos³β</div>
+    <div class="fields">
+      <div class="field"><div class="sec-label">Z real</div><input type="number" id="ch-zreal" min="1" placeholder="Z"></div>
+      <div class="field"><div class="sec-label">β [°]</div><input type="number" id="ch-beta2" value="15" min="1" max="45"></div>
+    </div>
+    <div class="lcd" id="ch-zv-lcd"></div>
+    <div class="lcd" id="ch-ver-lcd"></div>
+    <div class="ref">Melconian §7 (p.131) · Z_v usado para ler q na tabela de engrenagens cilíndricas</div>
+  </div>
+</div><!-- /cil-hel -->
+
+<!-- ████████████████ CÔNICAS ████████████████ -->
+<div class="tipo-panel" id="tp-conica">
+  <div class="sub-nav">
+    <button class="sub-btn ativo" data-sub="co-geo">Geometria</button>
+    <button class="sub-btn" data-sub="co-ver">Verificação</button>
+  </div>
+
+  <div class="sub-panel ativo" id="sp-co-geo">
+    <div class="formula">tg δ₁=Z₁/Z₂ · Re=m·Z/(2·sin δ) · dm=Re−b/2 · Rv=dm/(2·sin δ)</div>
+    <div class="fields">
+      <div class="field"><div class="sec-label">Módulo m (no cone externo)</div><select id="co-m"></select></div>
+      <div class="field"><div class="sec-label">Dentes pinhão Z₁</div><input type="number" id="co-z1" value="17" min="1"></div>
+      <div class="field"><div class="sec-label">Dentes coroa Z₂</div><input type="number" id="co-z2" value="34" min="1"></div>
+      <div class="field"><div class="sec-label">Largura do dente b [mm]</div><input type="number" id="co-b" min="0" placeholder="Re/3 (usual)"></div>
+    </div>
+    <div class="folga-box">
+      <label>Folga radial Sₖ [mm]</label>
+      <input type="number" id="co-sk" min="0" step="0.001" placeholder="0,1 a 0,3·m">
+      <button class="folga-reset" onclick="coResetSk()">Padrão (0,2·m)</button>
+      <label style="margin-left:6px">Ângulo de pressão α [°]</label>
+      <input type="number" id="co-alpha" value="20" min="1" max="45" step="0.5" style="width:72px">
+      <button class="folga-reset" onclick="document.getElementById('co-alpha').value=20;coGeoCalc()">DIN 867 (20°)</button>
+      <span class="folga-tag">Afeta F_r=F_t·tg α · DIN 867: α=20° · §8.1</span>
+    </div>
+    <div class="lcd" id="co-geo-lcd"></div>
+    <div class="ref">Melconian §8.1–8.3 (p.147–161) · Ângulo de pressão α=20° · Ângulo do eixo Σ=90° (usual)</div>
+  </div>
+
+  <div class="sub-panel" id="sp-co-ver">
+    <div class="sec-label">Critério de desgaste §8.2.1</div>
+    <div class="formula">p_adm = 0,487·HB / W^(1/6) · (calculada no diâmetro médio dm)</div>
+    <div class="fields">
+      <div class="field"><div class="sec-label">HB [N/mm²]</div><input type="number" id="co-hb" value="1800" min="0"></div>
+      <div class="field"><div class="sec-label">n_p [rpm]</div><input type="number" id="co-np" value="1750" min="0"></div>
+      <div class="field"><div class="sec-label">Duração h [h]</div><input type="number" id="co-dh" value="10000" min="0"></div>
+    </div>
+    <div class="lcd" id="co-v1-lcd"></div>
+    <div class="sep"></div>
+    <div class="sec-label">Critério de resistência §8.2.2</div>
+    <div class="formula">σ_máx = F_tm·q·φ / (b·m_m) ≤ σ_mat · m_m = m·(1−b/(2·Re))</div>
+    <div class="fields">
+      <div class="field"><div class="sec-label">F_tm [N] (no dm)</div><input type="number" id="co-ftm" min="0"></div>
+      <div class="field"><div class="sec-label">q</div><input type="number" id="co-qv" min="0" step="0.0001"></div>
+      <div class="field"><div class="sec-label">φ (AGMA)</div><input type="number" id="co-phi" min="0" step="0.01"></div>
+      <div class="field"><div class="sec-label">b [mm]</div><input type="number" id="co-bv" min="0"></div>
+      <div class="field"><div class="sec-label">m_m [mm]</div><input type="number" id="co-mm" min="0" placeholder="m·(1−b/2Re)"></div>
+      <div class="field" style="flex:2 1 170px"><div class="sec-label">Material</div><select id="co-mat"></select></div>
+    </div>
+    <div class="lcd" id="co-v2-lcd"></div>
+    <div class="ref">Melconian §8.2 (p.149–161)</div>
+  </div>
+</div><!-- /conica -->
+
+<!-- ████████████████ SEM-FIM ████████████████ -->
+<div class="tipo-panel" id="tp-semfim">
+  <div class="sub-nav">
+    <button class="sub-btn ativo" data-sub="sf-geo">Geometria</button>
+    <button class="sub-btn" data-sub="sf-tab">Tabelas</button>
+  </div>
+
+  <div class="sub-panel ativo" id="sp-sf-geo">
+    <div class="formula">i=Z₂/Z₁ · d₁=m·Z₁ · d₂=m·Z₂ · Cc=(d₁+d₂)/2 · γ=arctg(Z₁/q_sf) · η=tg γ/tg(γ+ρ)</div>
+    <div class="fields">
+      <div class="field"><div class="sec-label">Módulo m — DIN 780</div><select id="sf-m"></select></div>
+      <div class="field"><div class="sec-label">Entradas do parafuso Z₁</div>
+        <select id="sf-z1"><option value="1">1 — simples</option><option value="2">2 — duplo</option><option value="3">3 — triplo</option><option value="4">4 — quádruplo</option></select></div>
+      <div class="field"><div class="sec-label">Dentes da coroa Z₂</div><input type="number" id="sf-z2" value="40" min="10"></div>
+      <div class="field"><div class="sec-label">Coef. de forma q_sf</div>
+        <select id="sf-q">
+          <option value="6">6</option><option value="8">8</option><option value="10" selected>10</option>
+          <option value="12">12</option><option value="16">16</option><option value="20">20</option>
+        </select></div>
+      <div class="field"><div class="sec-label">Ângulo atrito ρ [°]</div><input type="number" id="sf-rho" value="3" min="1" max="15" step="0.5" placeholder="1°–15°"></div>
+      <div class="field"><div class="sec-label">Rotação n₁ [rpm]</div><input type="number" id="sf-n1" min="0" placeholder="opcional"></div>
+    </div>
+    <div class="lcd" id="sf-geo-lcd"></div>
+    <div class="ref">Melconian §9 (p.163–185) · DIN 3975 · q_sf=d₁/m (coef. de forma do parafuso)</div>
+  </div>
+
+  <div class="sub-panel" id="sp-sf-tab">
+    <div class="sec-label">Tabela de rendimento η × ângulo de hélice γ e atrito ρ</div>
+    <div class="tbl-wrap"><table class="tbl" id="sf-eta-tbl"></table></div>
+    <div class="sec-label" style="margin-top:14px">Coeficiente de atrito μ × velocidade de deslizamento v_s</div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>v_s [m/s]</th><th>μ (Bronze-Aço)</th><th>ρ ≈</th></tr></thead>
+        <tbody>
+          <tr><td>0,01</td><td class="am">0,145</td><td>8,3°</td></tr>
+          <tr><td>0,10</td><td class="am">0,120</td><td>6,8°</td></tr>
+          <tr><td>0,50</td><td class="am">0,090</td><td>5,1°</td></tr>
+          <tr><td>1,00</td><td class="am">0,070</td><td>4,0°</td></tr>
+          <tr><td>2,00</td><td class="am">0,055</td><td>3,1°</td></tr>
+          <tr><td>4,00</td><td class="am">0,040</td><td>2,3°</td></tr>
+          <tr><td>8,00</td><td class="am">0,030</td><td>1,7°</td></tr>
+          <tr><td>15,0</td><td class="am">0,025</td><td>1,4°</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="ref">Melconian §9 (p.163–185) · v_s = velocidade de deslizamento no passo primitivo</div>
+  </div>
+</div><!-- /semfim -->
+
+<!-- ████████████████ ESTRIAS ████████████████ -->
+<div class="tipo-panel" id="tp-estria">
+  <div class="sub-nav">
+    <button class="sub-btn ativo" data-sub="es-tab">Tabelas DIN</button>
+    <button class="sub-btn" data-sub="es-ver">Verificação</button>
+  </div>
+
+  <div class="sub-panel ativo" id="sp-es-tab">
+    <div class="sec-label" style="margin-bottom:8px">Série leve — DIN 5462 · 6 flancos</div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>d [mm]</th><th>D [mm]</th><th>b [mm]</th><th>Z</th><th>d_m [mm]</th></tr></thead>
+        <tbody id="es-leve-tbody"></tbody>
+      </table>
+    </div>
+    <div class="sec-label" style="margin-top:14px;margin-bottom:8px">Série média — DIN 5462 · 6 flancos</div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>d [mm]</th><th>D [mm]</th><th>b [mm]</th><th>Z</th><th>d_m [mm]</th></tr></thead>
+        <tbody id="es-media-tbody"></tbody>
+      </table>
+    </div>
+    <div class="sec-label" style="margin-top:14px;margin-bottom:8px">Série pesada — DIN 5463 · 10 flancos</div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>d [mm]</th><th>D [mm]</th><th>b [mm]</th><th>Z</th><th>d_m [mm]</th></tr></thead>
+        <tbody id="es-pesada-tbody"></tbody>
+      </table>
+    </div>
+    <div class="ref">Melconian §10 (p.167–177) · d=diâmetro interno · D=diâmetro externo · b=largura do flanco · d_m=(d+D)/2</div>
+  </div>
+
+  <div class="sub-panel" id="sp-es-ver">
+    <div class="formula">p = 2·T / (d_m·Z·h·L·ψ) ≤ p_adm</div>
+    <div class="sec-label">Onde: T=torque [N·mm] · h=(D−d)/2 · L=comp. engrenado [mm] · ψ=fator distribuição (0,75)</div>
+    <div class="fields" style="margin-top:10px">
+      <div class="field"><div class="sec-label">Torque T [N·mm]</div><input type="number" id="es-T" min="0" placeholder="N·mm"></div>
+      <div class="field"><div class="sec-label">d_m [mm]</div><input type="number" id="es-dm" min="0" placeholder="(d+D)/2"></div>
+      <div class="field"><div class="sec-label">Nº de flancos Z</div><input type="number" id="es-Z" min="4" placeholder="6 ou 10"></div>
+      <div class="field"><div class="sec-label">h=(D−d)/2 [mm]</div><input type="number" id="es-h" min="0" placeholder="mm"></div>
+      <div class="field"><div class="sec-label">Comprimento L [mm]</div><input type="number" id="es-L" min="0" placeholder="mm"></div>
+      <div class="field"><div class="sec-label">ψ (dist. carga)</div><input type="number" id="es-psi" value="0.75" min="0.1" max="1" step="0.05"></div>
+      <div class="field"><div class="sec-label">p_adm [N/mm²]</div><input type="number" id="es-padm" min="0" placeholder="ex.: 15"></div>
+    </div>
+    <div class="lcd" id="es-ver-lcd"></div>
+    <div class="tbl-wrap" style="margin-top:10px">
+      <table class="tbl">
+        <thead><tr><th>Material do cubo</th><th>p_adm fixo [N/mm²]</th><th>p_adm deslizante [N/mm²]</th></tr></thead>
+        <tbody>
+          <tr><td>Aço — cargas leves</td><td class="am">35</td><td class="am">15</td></tr>
+          <tr><td>Aço — cargas pesadas</td><td class="am">20</td><td class="am">7</td></tr>
+          <tr><td>Ferro fundido cinzento</td><td class="am">15</td><td class="am">5</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="ref">Melconian §10 (p.167–177) · ψ=0,75 usual (75% dos flancos em contato)</div>
+  </div>
+</div><!-- /estria -->
+
+<!-- ████████████████ MATERIAIS ████████████████ -->
+<div class="tipo-panel" id="tp-materiais">
+  <div class="fields">
+    <div class="field" style="flex:2 1 200px">
+      <div class="sec-label">Referência do material</div>
+      <select id="mat-ref-sel"></select>
+    </div>
+  </div>
+  <div class="lcd" id="mat-lcd"></div>
+  <div class="tbl-wrap hidden" id="mat-comp-wrap">
+    <table class="tbl" id="mat-comp-tbl"></table>
+  </div>
+  <div class="ref" id="mat-ref-txt"></div>
+</div>
+
+<!-- ████████████████ AGMA ████████████████ -->
+<div class="tipo-panel" id="tp-agma">
+  <div class="formula">φ — Tab.1: motores elétricos/turbinas · Tab.2: conversão para motores a explosão</div>
+  <div class="field" style="margin-bottom:10px">
+    <div class="sec-label">Buscar aplicação</div>
+    <input type="text" id="agma-busca" placeholder="ex.: bomba, britador, ventilador…">
+  </div>
+  <div class="lcd hidden" id="agma-lcd"></div>
+  <div class="tbl-scroll">
+    <table><thead><tr><th>Aplicação</th><th class="c">10 h</th><th class="c">24 h</th></tr></thead>
+    <tbody id="agma-tbody"></tbody></table>
+  </div>
+  <button class="btn-sec" id="agma-t2-btn">Ver Tabela 2 — motores a explosão</button>
+  <div class="hidden" id="agma-t2">
+    <div class="tbl-wrap" style="margin-top:8px">
+      <table class="tbl">
+        <thead><tr><th>El. 10h</th><th>El. 3h</th><th>Exp. 3h</th><th>Exp. 10h</th><th>Exp. 24h</th></tr></thead>
+        <tbody>
+          <tr><td>1,00</td><td class="am">0,50</td><td class="am">1,00</td><td class="am">1,25</td><td class="am">1,50</td></tr>
+          <tr><td>1,25</td><td class="am">1,00</td><td class="am">1,25</td><td class="am">1,50</td><td class="am">1,75</td></tr>
+          <tr><td>1,75</td><td class="am">1,50</td><td class="am">1,75</td><td class="am">2,00</td><td class="am">2,25</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="ref">Localize φ de 10h na 1ª coluna → leia o fator convertido. Picos ≤ 200% carga normal.</div>
+  </div>
+  <div class="ref">Melconian §6.13 (p.103–107)</div>
+</div>
+
+</main>
+
+<footer>
+  MELCONIAN, S. <em>Elementos de Máquinas</em> — Cap. 6 (p.95–113), 7 (p.131–145), 8 (p.147–161), 9 (p.163–185), 10 (p.167–177).
+  Ferramenta de consulta acadêmica — confirme os valores no livro para uso em projeto.
+</footer>
+</div><!-- /app -->
+
 <script>
-/* ================================================================
+/* ============================================================
    DADOS DO LIVRO
-   ================================================================ */
+   ============================================================ */
 
 /* DIN 780 — módulos normalizados */
-const MODULOS = (() => {
-  const o = [];
-  const push = v => o.push(Math.round(v * 100) / 100);
-  for (let v = 0.3; v < 1.0 - 1e-9; v += 0.10) push(v);
-  for (let v = 1.0; v < 4.0 - 1e-9; v += 0.25) push(v);
-  for (let v = 4.0; v < 7.0 - 1e-9; v += 0.50) push(v);
-  for (let v = 7.0; v < 16.0 - 1e-9; v += 1)   push(v);
-  for (let v = 16.0;v < 24.0 - 1e-9; v += 2)   push(v);
-  for (let v = 24.0;v < 45.0 - 1e-9; v += 3)   push(v);
-  for (let v = 45.0;v <= 75.0 + 1e-9; v += 5)  push(v);
+const MODULOS = (()=>{
+  const o=[]; const p=v=>o.push(Math.round(v*100)/100);
+  for(let v=0.3;v<1.0-1e-9;v+=0.10)p(v);
+  for(let v=1.0;v<4.0-1e-9;v+=0.25)p(v);
+  for(let v=4.0;v<7.0-1e-9;v+=0.50)p(v);
+  for(let v=7.0;v<16.0-1e-9;v+=1)p(v);
+  for(let v=16.0;v<24.0-1e-9;v+=2)p(v);
+  for(let v=24.0;v<45.0-1e-9;v+=3)p(v);
+  for(let v=45.0;v<=75.0+1e-9;v+=5)p(v);
   return o;
 })();
 
-/* Fator de forma q — item 6.12 */
-const Q_EXT = [[10,5.2],[11,4.9],[12,4.5],[13,4.3],[14,4.1],[15,3.9],
-               [16,3.7],[17,3.6],[18,3.5],[21,3.3],[24,3.2],[28,3.1],
-               [34,3.0],[40,2.9],[50,2.8],[65,2.7],[80,2.6],[100,2.6]];
-const Q_INT = [[20,1.7],[24,1.8],[30,1.9],[38,2.0],[50,2.1],
-               [70,2.2],[100,2.3],[200,2.4]];
+/* Fator de forma q §6.12 */
+const Q_EXT=[[10,5.2],[11,4.9],[12,4.5],[13,4.3],[14,4.1],[15,3.9],
+             [16,3.7],[17,3.6],[18,3.5],[21,3.3],[24,3.2],[28,3.1],
+             [34,3.0],[40,2.9],[50,2.8],[65,2.7],[80,2.6],[100,2.6]];
+const Q_INT=[[20,1.7],[24,1.8],[30,1.9],[38,2.0],[50,2.1],[70,2.2],[100,2.3],[200,2.4]];
 
-/* Materiais — itens 6.5, 6.6, 6.14 */
-const MATERIAIS = [
-  {ref:"Aço fundido tipo 2",  hb:[1700,2500], sigma:90,  grupo:"Aço fundido"},
-  {ref:"Aço fundido tipo B2", hb:[1250,1500], sigma:90,  grupo:"Aço fundido"},
-  {ref:"SAE 1010",            hb:null,        sigma:90,  grupo:"SAE 1010/1020"},
-  {ref:"SAE 1020",            hb:[1400,1750], sigma:90,  grupo:"SAE 1010/1020",
+/* Materiais §6.5, 6.6, 6.14 */
+const MATERIAIS=[
+  {ref:"Aço fundido tipo 2", hb:[1700,2500],sigma:90, grupo:"Aço fundido"},
+  {ref:"Aço fundido tipo B2",hb:[1250,1500],sigma:90, grupo:"Aço fundido"},
+  {ref:"SAE 1010",hb:null,sigma:90,grupo:"SAE 1010/1020"},
+  {ref:"SAE 1020",hb:[1400,1750],sigma:90,grupo:"SAE 1010/1020",
    comp:{villares:"VT-20",din:"C-22",C:"0,20",Ni:"–",Cr:"–",Mo:"–",Mn:"0,3",Si:"–",P:"0,04",S:"0,05"}},
-  {ref:"SAE 1040",            hb:[1800,2300], sigma:120, grupo:"SAE 1040/1050",
+  {ref:"SAE 1040",hb:[1800,2300],sigma:120,grupo:"SAE 1040/1050",
    comp:{villares:"VT-40",din:"–",C:"0,40",Ni:"–",Cr:"–",Mo:"–",Mn:"0,7",Si:"–",P:"0,04",S:"0,05"}},
-  {ref:"SAE 1050",            hb:[2200,2600], sigma:120, grupo:"SAE 1040/1050",
+  {ref:"SAE 1050",hb:[2200,2600],sigma:120,grupo:"SAE 1040/1050",
    comp:{villares:"VT-50",din:"C-53",C:"0,50",Ni:"–",Cr:"–",Mo:"–",Mn:"0,7",Si:"–",P:"0,04",S:"0,04"}},
-  {ref:"SAE 3145",            hb:[1900,2300], sigma:null,grupo:"SAE 3145/3150",
+  {ref:"SAE 3145",hb:[1900,2300],sigma:null,grupo:"SAE 3145/3150",
    comp:{villares:"–",din:"–",C:"0,45",Ni:"1,45",Cr:"0,75",Mo:"–",Mn:"0,9",Si:"0,3",P:"0,04",S:"0,04"}},
-  {ref:"SAE 3150",            hb:[1900,2300], sigma:null,grupo:"SAE 3145/3150",
+  {ref:"SAE 3150",hb:[1900,2300],sigma:null,grupo:"SAE 3145/3150",
    comp:{villares:"–",din:"–",C:"0,50",Ni:"1,50",Cr:"0,75",Mo:"–",Mn:"0,9",Si:"0,3",P:"0,04",S:"0,04"}},
-  {ref:"SAE 4320",            hb:[2000,4200], sigma:170, grupo:"SAE 4320/4340", tt:true,
+  {ref:"SAE 4320",hb:[2000,4200],sigma:170,grupo:"SAE 4320/4340",tt:true,
    comp:{villares:"VM-20",din:"–",C:"0,20",Ni:"1,80",Cr:"0,50",Mo:"0,25",Mn:"0,6",Si:"0,3",P:"0,04",S:"0,04"}},
-  {ref:"SAE 4340",            hb:[2600,6000], sigma:170, grupo:"SAE 4320/4340", tt:true,
+  {ref:"SAE 4340",hb:[2600,6000],sigma:170,grupo:"SAE 4320/4340",tt:true,
    comp:{villares:"VM-40",din:"–",C:"0,40",Ni:"1,80",Cr:"0,05",Mo:"0,25",Mn:"0,7",Si:"0,3",P:"0,04",S:"0,04"}},
-  {ref:"SAE 8620",            hb:[1700,2700], sigma:200, grupo:"SAE 8620/8640", tt:true,
+  {ref:"SAE 8620",hb:[1700,2700],sigma:200,grupo:"SAE 8620/8640",tt:true,
    comp:{villares:"VB-20",din:"21 NiCrMo2",C:"0,20",Ni:"0,60",Cr:"0,50",Mo:"0,20",Mn:"0,8",Si:"0,3",P:"0,04",S:"0,04"}},
-  {ref:"SAE 8640",            hb:[2000,6000], sigma:200, grupo:"SAE 8620/8640", tt:true,
+  {ref:"SAE 8640",hb:[2000,6000],sigma:200,grupo:"SAE 8620/8640",tt:true,
    comp:{villares:"VB-40",din:"–",C:"0,40",Ni:"0,60",Cr:"0,50",Mo:"0,20",Mn:"0,9",Si:"0,3",P:"0,04",S:"0,04"}},
-  {ref:"FoFo cinzento",       hb:[1200,2400], sigma:40,  grupo:"Ferro fundido"},
-  {ref:"FoFo nodular",        hb:[1100,1400], sigma:80,  grupo:"Ferro fundido"},
-  {ref:"Mat. sintético — Resinas",hb:null,   sigma:35,  grupo:"Sintético"},
+  {ref:"FoFo cinzento",hb:[1200,2400],sigma:40,grupo:"Ferro fundido"},
+  {ref:"FoFo nodular",hb:[1100,1400],sigma:80,grupo:"Ferro fundido"},
+  {ref:"Mat. sintético — Resinas",hb:null,sigma:35,grupo:"Sintético"},
 ];
 
-/* AGMA — tabela 1 (p. 103–107): [grupo, aplicação, φ10h, φ24h] */
-const AGMA = [
+/* AGMA §6.13 tab 1 */
+const AGMA=[
   ["Agitadores","Líquidos",1.0,1.25],
   ["Agitadores","Misturadores de polpa",1.25,1.5],
   ["Agitadores","Semilíquidos de densidade variável",1.25,1.5],
@@ -452,7 +567,7 @@ const AGMA = [
   ["Embobinadeiras","Metais",1.25,1.5],
   ["Embobinadeiras","Papel",1.0,1.25],
   ["Embobinadeiras","Têxtil",1.25,1.5],
-  ["Enlatadoras e engarrafadoras","Enlatadoras e engarrafadoras",1.0,1.25],
+  ["Enlatadoras","Enlatadoras e engarrafadoras",1.0,1.25],
   ["Escadas rolantes","Escadas rolantes",1.0,1.25],
   ["Fábrica de cimento","Britadores de mandíbulas",1.75,2.0],
   ["Fábrica de cimento","Fornos rotativos",1.75,1.5],
@@ -462,391 +577,677 @@ const AGMA = [
   ["Fábricas de papel","Batedores e despolpadores",1.25,1.5],
   ["Fábricas de papel","Calandras",1.25,1.8],
   ["Fábricas de papel","Hipercalandras",1.75,3.0],
-  ["Fábricas de papel","Cilindros",1.25,1.5],
   ["Fábricas de papel","Descascadores mecânicos e hidráulicos",1.25,1.8],
   ["Fábricas de papel","Tambores e descascadores",1.75,2.0],
   ["Fábricas de papel","Embobinadeiras",1.0,1.25],
-  ["Fábricas de papel","Esticadores de feltro",1.25,1.5],
-  ["Fábricas de papel","Jardanas",1.75,2.0],
   ["Fábricas de papel","Prensas",1.0,1.28],
-  ["Fábricas de papel","Secadoras",1.25,1.8],
   ["Geradores","Geradores",1.0,1.25],
   ["Guinchos e gruas","Cargas uniformes",1.25,1.8],
   ["Guinchos e gruas","Cargas pesadas",1.75,2.0],
-  ["Indústria alimentícia","Cozinhadores de cereais",1.0,1.25],
-  ["Indústria alimentícia","Enlatadoras e engarrafadoras",1.0,1.25],
-  ["Indústria alimentícia","Misturadores de massa",1.25,1.8],
-  ["Indústria alimentícia","Moedores de carne",1.25,1.8],
-  ["Indústria alimentícia","Picadores",1.25,1.8],
-  ["Ind. borracha e plástico","Calandras",null,1.8],
-  ["Ind. borracha e plástico","Equipamentos de laboratório",1.25,1.8],
-  ["Ind. borracha e plástico","Extrusoras (entubadoras)",null,1.5],
-  ["Ind. borracha e plástico","Moinhos cilíndricos",null,1.5],
-  ["Ind. borracha e plástico","Moinhos — 2 em linha",null,1.5],
-  ["Ind. borracha e plástico","Moinhos — 3 em linha",null,1.25],
-  ["Ind. borracha e plástico","Refinadores",null,1.8],
-  ["Ind. borracha e plástico","Trituradores e misturadores",null,2.0],
-  ["Indústria madeireira","Alimentadoras de plaina",1.25,1.5],
-  ["Indústria madeireira","Serras",1.5,1.75],
-  ["Indústria madeireira","Tombadores despolpadores",1.75,2.0],
-  ["Indústria madeireira","Transportadores de tora",1.75,2.0],
-  ["Indústria têxtil","Calandras",1.25,1.5],
-  ["Indústria têxtil","Cordas",1.25,1.5],
-  ["Indústria têxtil","Filatórios e retorcedeiras",1.25,1.5],
-  ["Indústria têxtil","Maçaroqueiras",1.25,1.5],
-  ["Indústria têxtil","Máquinas de tinturaria",1.25,1.5],
-  ["Indústria metalúrgica","Cortadores de chapa",1.25,1.5],
-  ["Indústria metalúrgica","Embobinadeiras",1.25,1.5],
-  ["Indústria metalúrgica","Laminadores",null,null],
-  ["Indústria metalúrgica","Trefilas",1.25,1.5],
-  ["Indústria metalúrgica","Viradeiras",1.75,2.0],
+  ["Ind. alimentícia","Cozinhadores de cereais",1.0,1.25],
+  ["Ind. alimentícia","Misturadores de massa",1.25,1.8],
+  ["Ind. alimentícia","Moedores de carne",1.25,1.8],
+  ["Ind. borracha/plástico","Calandras",null,1.8],
+  ["Ind. borracha/plástico","Extrusoras",null,1.5],
+  ["Ind. borracha/plástico","Moinhos cilíndricos",null,1.5],
+  ["Ind. borracha/plástico","Refinadores",null,1.8],
+  ["Ind. borracha/plástico","Trituradores e misturadores",null,2.0],
+  ["Ind. madeireira","Alimentadoras de plaina",1.25,1.5],
+  ["Ind. madeireira","Serras",1.5,1.75],
+  ["Ind. madeireira","Tombadores despolpadores",1.75,2.0],
+  ["Ind. madeireira","Transportadores de tora",1.75,2.0],
+  ["Ind. têxtil","Calandras",1.25,1.5],
+  ["Ind. têxtil","Filatórios e retorcedeiras",1.25,1.5],
+  ["Ind. metalúrgica","Cortadores de chapa",1.25,1.5],
+  ["Ind. metalúrgica","Laminadores",null,null],
+  ["Ind. metalúrgica","Trefilas",1.25,1.5],
+  ["Ind. metalúrgica","Viradeiras",1.75,2.0],
   ["Máquinas operatrizes","Acionamento principal — cargas pesadas",1.75,2.0],
   ["Máquinas operatrizes","Acionamento principal — cargas uniformes",1.25,1.5],
   ["Máquinas operatrizes","Acionamento auxiliar",1.0,1.25],
   ["Máquinas operatrizes","Prensas",1.75,2.0],
   ["Misturadores","Betoneiras",1.25,1.5],
   ["Misturadores","Líquidos de densidade constante",1.0,1.25],
-  ["Misturadores","Líquidos de densidade variável",1.25,1.5],
   ["Misturadores","Líquidos para borracha",null,2.0],
-  ["Misturadores","Líquidos para polpa de painel",1.25,1.5],
   ["Moinhos","De bolas e rolos",1.25,1.5],
   ["Moinhos","De martelos",1.75,2.0],
-  ["Moinhos","Para areia",1.25,1.5],
-  ["Olarias e cerâmica","Estrusoras e misturadores",1.25,1.5],
-  ["Olarias e cerâmica","Prensas de tijolo e ladrilho",1.75,2.0],
   ["Pontes rolantes","Acionamento do carro e da ponte",1.75,2.0],
   ["Pontes rolantes","Acionamento do guincho",1.0,1.25],
   ["Refinaria de açúcar","Centrífugas",1.25,1.5],
   ["Refinaria de açúcar","Moendas",1.5,2.0],
-  ["Refinaria de açúcar","Facas de cana",null,1.5],
   ["Refinaria de petróleo","Bombas",1.0,1.25],
   ["Refinaria de petróleo","Equipamentos em geral",1.25,1.5],
   ["Roscas transportadoras","Cargas uniformes",1.0,1.25],
   ["Roscas transportadoras","Cargas pesadas e alimentadores",1.25,1.5],
-  ["Secadores e resfriadores rotativos","Secadores e resfriadores rotativos",1.25,1.5],
+  ["Secadores rotativos","Secadores e resfriadores rotativos",1.25,1.5],
   ["Telas e peneiras","Filtragem de ar",1.0,1.25],
-  ["Telas e peneiras","Para água — esteiras",1.0,1.25],
   ["Telas e peneiras","Recíprocas",1.25,1.5],
-  ["Telas e peneiras","Rotativas para cascalho",1.25,1.5],
   ["Torres de refrigeração","Cargas uniformes",1.9,1.25],
-  ["Torres de refrigeração","Cargas pesadas e descontínuas",1.25,1.5],
   ["Torres de refrigeração","Recíprocos e vibratórios",1.75,2.0],
-  ["Tratamento de água e esgoto","Pulverizadores, alimentadores, bombas, coletores",1.0,1.25],
-  ["Tratamento de água e esgoto","Filtros mexedores e peneiras",1.25,1.5],
+  ["Trat. água e esgoto","Pulverizadores, bombas, coletores",1.0,1.25],
+  ["Trat. água e esgoto","Filtros mexedores e peneiras",1.25,1.5],
   ["Ventiladores","Centrífugos",1.0,1.25],
   ["Ventiladores","Outros tipos",1.25,1.5],
 ];
 
-/* ================================================================
+/* Estrias DIN 5462 — série LEVE (6 flancos) §10 */
+const ES_LEVE=[
+  [11,14,3,6], [13,16,3.5,6], [16,20,4,6], [18,22,5,6],
+  [21,25,5,6], [23,28,6,6],  [26,32,6,6], [28,34,7,6],
+  [32,38,6,6], [36,42,7,6],  [42,48,8,6], [46,54,9,6],
+  [52,60,10,6],[56,65,10,6], [62,72,12,6],[72,82,12,6],
+  [82,92,12,6],[92,102,14,6],[102,112,14,6],[112,125,14,6],
+];
+/* Série MÉDIA (6 flancos) §10 */
+const ES_MEDIA=[
+  [16,20,4,6],[18,23,5,6],[21,26,5,6],[23,29,6,6],
+  [26,32,6,6],[28,35,7,6],[32,40,8,6],[36,45,9,6],
+  [42,52,10,6],[46,56,10,6],[52,62,12,6],[56,67,12,6],
+  [62,72,12,6],[72,85,14,6],[82,95,14,6],[92,105,14,6],
+  [102,115,16,6],[112,130,18,6],
+];
+/* Série PESADA (10 flancos) §10 */
+const ES_PESADA=[
+  [16,20,2.5,10],[18,23,3,10],[21,26,3,10],[23,29,3,10],
+  [26,32,3,10],[28,35,4,10],[32,40,4,10],[36,45,5,10],
+  [42,52,6,10],[46,56,6,10],[52,60,5,10],[56,65,5,10],
+  [62,72,6,10],[72,84,7,10],[82,94,7,10],[92,105,8,10],
+  [102,116,8,10],[112,127,9,10],
+];
+
+/* ============================================================
    UTILITÁRIOS
-   ================================================================ */
-const f2 = (v, d=2) => v==null||isNaN(v) ? '—' : (+v).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:d});
-const f4 = v => f2(v,4);
-const fPct = v => f2(v,1);
-const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+   ============================================================ */
+const f=(v,d=2)=>v==null||isNaN(v)?'—':(+v).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:d});
+const f4=v=>f(v,4);
+const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const rad=deg=>deg*Math.PI/180;
+const deg=r=>r*180/Math.PI;
 
-function fatorQ(Z, tipo) {
-  const tab = tipo === 'int' ? Q_INT : Q_EXT;
-  const lim = tipo === 'int' ? 2.5 : 2.5;
-  const zMin = tab[0][0], zMax = tab[tab.length-1][0];
-  if (!Z || Z < zMin) return {q:null, nota:`Tabela inicia em Z = ${zMin}`};
-  if (Z > zMax) return {q:lim, nota:`Z > ${zMax} — valor-limite da tabela`};
-  for (let i=0; i<tab.length; i++) {
-    if (tab[i][0] === Z) return {q:tab[i][1], nota:'Valor tabelado'};
-    if (tab[i][0] > Z) {
-      const [z0,q0] = tab[i-1], [z1,q1] = tab[i];
-      const q = q0 + (q1-q0)*(Z-z0)/(z1-z0);
-      return {q: Math.round(q*10000)/10000, nota:`Interpolado entre Z=${z0} (q=${q0.toFixed(1).replace('.',',')}) e Z=${z1} (q=${q1.toFixed(1).replace('.',',')})`};
+function fatorQ(Z,tipo){
+  const tab=tipo==='int'?Q_INT:Q_EXT;
+  const lim=2.5;
+  const zMin=tab[0][0],zMax=tab[tab.length-1][0];
+  if(!Z||Z<zMin)return{q:null,nota:`Tabela inicia em Z=${zMin}`};
+  if(Z>zMax)return{q:lim,nota:`Z>${zMax} — valor-limite`};
+  for(let i=0;i<tab.length;i++){
+    if(tab[i][0]===Z)return{q:tab[i][1],nota:'Valor tabelado'};
+    if(tab[i][0]>Z){
+      const[z0,q0]=tab[i-1],[z1,q1]=tab[i];
+      const q=q0+(q1-q0)*(Z-z0)/(z1-z0);
+      return{q:Math.round(q*10000)/10000,nota:`Interpolado Z=${z0}(q=${q0.toFixed(1)}) – Z=${z1}(q=${q1.toFixed(1)})`};
     }
   }
-  return {q:null, nota:''};
+  return{q:null,nota:''};
 }
 
-/* Monta HTML do visor LCD */
-function lcdHTML(rows, note, stamp) {
-  let html = '';
-  if (stamp) {
-    const cls = stamp.ok ? 'ok' : 'fail';
-    html += `<div class="lcd-stamp ${cls}">${stamp.text}</div>`;
-  }
-  rows.forEach(([k,v,u]) => {
-    html += `<div class="lcd-row"><span class="lcd-k">${k}</span>
-      <span class="lcd-v">${v}${u ? `<span class="lcd-u">${u}</span>` : ''}</span></div>`;
+function lcdHTML(rows,note,stamp){
+  let h='';
+  if(stamp){h+=`<div class="lcd-stamp ${stamp.ok?'ok':'fail'}">${stamp.text}</div>`;}
+  rows.forEach(([k,v,u])=>{
+    h+=`<div class="lcd-row"><span class="lcd-k">${k}</span><span class="lcd-v">${v}${u?`<span class="lcd-u">${u}</span>`:''}</span></div>`;
   });
-  if (note) html += `<div class="lcd-note">${note}</div>`;
-  return html;
+  if(note)h+=`<div class="lcd-note">${note}</div>`;
+  return h;
 }
 
-/* ================================================================
-   ABA 1 — GEOMETRIA
-   ================================================================ */
-(function initGeo() {
-  const sel = document.getElementById('geo-m');
-  MODULOS.forEach(m => {
-    const o = document.createElement('option');
-    o.value = m;
-    o.textContent = m.toLocaleString('pt-BR');
-    if (m === 2) o.selected = true;
-    sel.appendChild(o);
+/* Preenche select de módulos */
+function fillModulos(id,def=2){
+  const s=document.getElementById(id);
+  MODULOS.forEach(m=>{
+    const o=document.createElement('option');
+    o.value=m; o.textContent=m.toLocaleString('pt-BR');
+    if(m===def)o.selected=true;
+    s.appendChild(o);
   });
+}
 
-  function calc() {
-    const mv  = parseFloat(sel.value);
-    const Z1  = parseInt(document.getElementById('geo-z1').value,10);
-    const Z2  = parseInt(document.getElementById('geo-z2').value,10);
-    const N1  = parseFloat(document.getElementById('geo-n1').value);
-    const t0  = mv ? mv * Math.PI : null;
-    const geo = (Z) => {
-      if (!mv || !Z) return null;
-      const d0 = mv*Z;
-      return {d0, dk: d0+2*mv, df: d0-2.4*mv};
+/* Preenche selects de materiais */
+function fillMateriais(id){
+  const s=document.getElementById(id);
+  MATERIAIS.filter(x=>x.sigma!==null).forEach(m=>{
+    const o=document.createElement('option');
+    o.value=m.ref; o.textContent=`${m.ref} — ${m.sigma} N/mm²`;
+    if(m.ref==='SAE 1040')o.selected=true;
+    s.appendChild(o);
+  });
+}
+
+/* Calculos reutilizáveis */
+function calcDesgaste(hb,np,h){
+  const W=(np>0&&h>0)?(60*np*h)/1e6:null;
+  const p=(W&&hb>0)?(0.487*hb)/Math.pow(W,1/6):null;
+  return{W,p};
+}
+function calcFlexao(ft,qv,phi,b,mv){
+  if(ft>0&&qv>0&&phi>0&&b>0&&mv>0)return (ft*qv*phi)/(b*mv);
+  return null;
+}
+
+/* ============================================================
+   ABA: CILÍNDRICAS DENTES RETOS
+   ============================================================ */
+(function(){
+  fillModulos('cr-m');
+  fillMateriais('cr-mat');
+
+  // helpers de reset
+  window.crResetSk=()=>{
+    const mv=parseFloat(document.getElementById('cr-m').value)||0;
+    document.getElementById('cr-sk').value=mv?(0.2*mv).toFixed(4):'';
+    crGeoCalc();
+  };
+
+  // geometria — exposta globalmente para o botão de reset de α
+  function crGeoCalc(){
+    const mv=parseFloat(document.getElementById('cr-m').value);
+    const Z1=parseInt(document.getElementById('cr-z1').value,10);
+    const Z2=parseInt(document.getElementById('cr-z2').value,10);
+    const N1=parseFloat(document.getElementById('cr-n1').value);
+    const skRaw=document.getElementById('cr-sk').value;
+    const sk=skRaw!==''?parseFloat(skRaw):(mv?0.2*mv:0);
+    const alpha=parseFloat(document.getElementById('cr-alpha').value)||20;
+    const t0=mv?mv*Math.PI:null;
+    const geo=Z=>{
+      if(!mv||!Z)return null;
+      const d0=mv*Z;
+      const hf=mv+sk;
+      const hz=2*mv+sk;
+      const Fr_by_Ft=Math.tan(rad(alpha)); // Fr/Ft = tg α
+      return{d0, dk:d0+2*mv, df:d0-2*hf, hf, hz, Fr_by_Ft};
     };
-    const g1 = geo(Z1), g2 = geo(Z2);
-    const i  = (Z1&&Z2) ? Z2/Z1 : null;
-    const cc = (g1&&g2) ? (g1.d0+g2.d0)/2 : null;
-    const n2 = (i&&N1)  ? N1/i : null;
-
-    const rows = [];
-    if (mv) {
-      rows.push(['Passo  t₀ = m·π',          f4(t0),          'mm']);
-      rows.push(['Espessura primitivo  S₀ = t₀/2', f4(t0/2), 'mm']);
-      rows.push(['Vão entre dentes  ℓ₀ = t₀/2',   f4(t0/2), 'mm']);
-      rows.push(['Altura da cabeça  hₖ = m',       f2(mv),   'mm']);
-      rows.push(['Altura do pé  h_f = 1,2·m',      f2(1.2*mv),'mm']);
-      rows.push(['Altura comum  h = 2·m',          f2(2*mv), 'mm']);
-      rows.push(['Altura total  h_z = 2,25·m',      f2(2.25*mv),'mm']);
-      rows.push(['Folga da cabeça  Sₖ = 0,2·m',   f2(0.2*mv),'mm']);
+    const g1=geo(Z1),g2=geo(Z2);
+    const i=(Z1&&Z2)?Z2/Z1:null;
+    const cc=(g1&&g2)?(g1.d0+g2.d0)/2:null;
+    const n2=(i&&N1)?N1/i:null;
+    const skTag=Math.abs(sk-(mv?0.2*mv:0))<1e-6?' (DIN 867)':' ⚠ MANUAL';
+    const aTag=Math.abs(alpha-20)<0.01?' (DIN 867)':' ⚠ MANUAL';
+    const rows=[];
+    if(mv){
+      rows.push(['Passo  t₀=m·π',f4(t0),'mm']);
+      rows.push(['hₖ=m · h=2m',`${f(mv,2)} · ${f(2*mv,2)}`,'mm']);
+      rows.push(['Folga Sₖ',f(sk,4)+skTag,'mm']);
+      rows.push(['h_f=m+Sₖ · h_z=2m+Sₖ',`${f(mv+sk,4)} · ${f(2*mv+sk,4)}`,'mm']);
     }
-    if (g1) {
-      rows.push(['Pinhão — d₀₁ = m·Z₁',f2(g1.d0),'mm']);
-      rows.push(['Pinhão — dₖ₁ (externo)',f2(g1.dk),'mm']);
-      rows.push(['Pinhão — d_f₁ (raiz)', f2(g1.df),'mm']);
-    }
-    if (g2) {
-      rows.push(['Coroa — d₀₂ = m·Z₂',  f2(g2.d0),'mm']);
-      rows.push(['Coroa — dₖ₂ (externo)',f2(g2.dk),'mm']);
-      rows.push(['Coroa — d_f₂ (raiz)',  f2(g2.df),'mm']);
-    }
-    if (i)  rows.push(['Relação  i = Z₂/Z₁ = n₁/n₂', f4(i),'']);
-    if (cc) rows.push(['Distância entre centros  Cc',  f2(cc),'mm']);
-    if (n2) rows.push(['Rotação da coroa  n₂ = n₁/i', f2(n2,1),'rpm']);
-    rows.push(['Ângulo de pressão  α (DIN 867)','20','°']);
-
-    document.getElementById('geo-lcd').innerHTML =
-      lcdHTML(rows, 'Folga nula no flanco (S₀ = ℓ₀). Biapoiada: b/d₀ ≤ 1,2 · Em balanço: b/d₀ ≤ 0,75.');
+    if(g1)rows.push(['Pinhão d₀₁ / dₖ₁ / d_f₁',`${f(g1.d0)} / ${f(g1.dk)} / ${f(g1.df)}`,'mm']);
+    if(g2)rows.push(['Coroa d₀₂ / dₖ₂ / d_f₂',`${f(g2.d0)} / ${f(g2.dk)} / ${f(g2.df)}`,'mm']);
+    if(i) rows.push(['Relação i=Z₂/Z₁',f4(i),'']);
+    if(cc)rows.push(['Dist. centros Cc',f(cc),'mm']);
+    if(n2)rows.push(['Rotação coroa n₂=n₁/i',f(n2,1),'rpm']);
+    rows.push(['Ângulo de pressão α',f(alpha,1)+aTag,'°']);
+    if(g1&&alpha)rows.push(['F_r/F_t = tg α',f(Math.tan(rad(alpha)),4),'(adimensional)']);
+    document.getElementById('cr-geo-lcd').innerHTML=lcdHTML(rows,
+      'b/d₀ ≤ 1,2 (biapoiada) · b/d₀ ≤ 0,75 (em balanço) · Folga no flanco = 0');
   }
-
-  ['change','input'].forEach(ev => {
-    sel.addEventListener(ev, calc);
-    ['geo-z1','geo-z2','geo-n1'].forEach(id => document.getElementById(id).addEventListener('input', calc));
+  window.crGeoCalc=crGeoCalc;
+  fillModulos('cr-m');
+  document.getElementById('cr-m').addEventListener('change',()=>{
+    const skEl=document.getElementById('cr-sk');
+    const mv=parseFloat(document.getElementById('cr-m').value)||0;
+    if(skEl.value===''||Math.abs(parseFloat(skEl.value)-0.2*(mv||1))<0.001)
+      skEl.value=mv?(0.2*mv).toFixed(4):'';
+    crGeoCalc();
   });
-  calc();
-})();
+  ['cr-z1','cr-z2','cr-n1'].forEach(id=>document.getElementById(id).addEventListener('input',crGeoCalc));
+  ['cr-sk','cr-alpha'].forEach(id=>document.getElementById(id).addEventListener('input',crGeoCalc));
+  crGeoCalc();
 
-/* ================================================================
-   ABA 2 — FATOR q
-   ================================================================ */
-(function initQ() {
-  function renderTabela(tipo, Zsel) {
-    const tab = tipo === 'int' ? Q_INT : Q_EXT;
-    const lim = tipo === 'int' ? 'q = 2,5 para Z > 200' : 'q = 2,5 para Z > 100 (cremalheira)';
-    const refEl = document.getElementById('q-ref');
-    refEl.textContent = `${lim}. Fonte: Melconian, item 6.12 (p. 102–103).`;
-
-    let zRow = '<tr><td class="left" style="color:var(--mut)">Z</td>';
-    let qRow = '<tr><td class="left" style="color:var(--mut)">q</td>';
-    tab.forEach(([zz,qq]) => {
-      const hl = zz === Zsel ? ' style="background:rgba(242,169,59,.14)"' : '';
-      zRow += `<td${hl}>${zz}</td>`;
-      qRow += `<td class="amber"${hl}>${qq.toFixed(1).replace('.',',')}</td>`;
+  // fator q
+  function qCalc(){
+    const tipo=document.getElementById('cr-q-tipo').value;
+    const Z=parseInt(document.getElementById('cr-q-z').value,10);
+    const r=fatorQ(Z,tipo);
+    document.getElementById('cr-q-lcd').innerHTML=lcdHTML([['Fator de forma q',r.q===null?'—':f4(r.q),'']],r.nota);
+    const tab=tipo==='int'?Q_INT:Q_EXT;
+    let zR=`<tr><td class="lft" style="color:var(--mut)">Z</td>`;
+    let qR=`<tr><td class="lft" style="color:var(--mut)">q</td>`;
+    tab.forEach(([zz,qq])=>{
+      const hl=zz===Z?' style="background:rgba(242,169,59,.14)"':'';
+      zR+=`<td${hl}>${zz}</td>`;qR+=`<td class="am"${hl}>${qq.toFixed(1).replace('.',',')}</td>`;
     });
-    zRow += '</tr>'; qRow += '</tr>';
-    document.getElementById('q-tbl').innerHTML = `<tbody>${zRow}${qRow}</tbody>`;
+    document.getElementById('cr-q-tbl').innerHTML=`<tbody>${zR}</tr>${qR}</tr></tbody>`;
+    document.getElementById('cr-q-ref').textContent=
+      tipo==='int'?'q=2,5 para Z>200. Melconian §6.12 (p.102–103)':'q=2,5 para Z>100 (cremalheira). Melconian §6.12 (p.102–103)';
   }
+  document.getElementById('cr-q-tipo').addEventListener('change',qCalc);
+  document.getElementById('cr-q-z').addEventListener('input',qCalc);
+  qCalc();
 
-  function calc() {
-    const tipo = document.getElementById('q-tipo').value;
-    const Z = parseInt(document.getElementById('q-z').value, 10);
-    const r = fatorQ(Z, tipo);
-    document.getElementById('q-lcd').innerHTML =
-      lcdHTML([['Fator de forma q', r.q === null ? '—' : f4(r.q), '']], r.nota);
-    renderTabela(tipo, Z);
+  // verificação
+  function verCalc(){
+    const HB=parseFloat(document.getElementById('cr-hb').value);
+    const NP=parseFloat(document.getElementById('cr-np').value);
+    const H=parseFloat(document.getElementById('cr-dh').value);
+    const {W,p}=calcDesgaste(HB,NP,H);
+    document.getElementById('cr-v1-lcd').innerHTML=lcdHTML([
+      ['Fator durabilidade W',W===null?'—':f(W,3),''],
+      ['Pressão adm. p_adm',p===null?'—':f(p,2),'N/mm²'],
+    ]);
+    const FT=parseFloat(document.getElementById('cr-ft').value);
+    const Qv=parseFloat(document.getElementById('cr-qv').value);
+    const PHI=parseFloat(document.getElementById('cr-phi').value);
+    const B=parseFloat(document.getElementById('cr-b').value);
+    const M=parseFloat(document.getElementById('cr-mv').value);
+    const matRef=document.getElementById('cr-mat').value;
+    const mat=MATERIAIS.find(x=>x.ref===matRef);
+    const sig=calcFlexao(FT,Qv,PHI,B,M);
+    const sAdm=mat?mat.sigma:null;
+    const stamp=sig!==null&&sAdm!==null?(sig<=sAdm?{ok:true,text:'Aprovado'}:{ok:false,text:'Reprovado'}):null;
+    const pct=(sig!==null&&sAdm)?f(100*sig/sAdm,1):null;
+    document.getElementById('cr-v2-lcd').innerHTML=lcdHTML([
+      ['σ_máx atuante',sig===null?'—':f(sig,2),'N/mm²'],
+      ['σ_material admissível',sAdm===null?'—':String(sAdm),'N/mm²'],
+      ['Utilização σ_máx/σ_mat',pct===null?'—':pct,'%'],
+    ],'σ_máx próximo do limite inferior = projeto ideal.',stamp);
   }
-
-  document.getElementById('q-tipo').addEventListener('change', calc);
-  document.getElementById('q-z').addEventListener('input', calc);
-  calc();
+  ['cr-hb','cr-np','cr-dh','cr-ft','cr-qv','cr-phi','cr-b','cr-mv'].forEach(id=>document.getElementById(id).addEventListener('input',verCalc));
+  document.getElementById('cr-mat').addEventListener('change',verCalc);
+  verCalc();
 })();
 
-/* ================================================================
-   ABA 3 — MATERIAIS
-   ================================================================ */
-(function initMat() {
-  const sel = document.getElementById('mat-ref');
-  MATERIAIS.forEach(m => {
-    const o = document.createElement('option');
-    o.value = m.ref;
-    o.textContent = m.ref;
-    if (m.ref === 'SAE 1040') o.selected = true;
+/* ============================================================
+   ABA: CILÍNDRICAS HELICOIDAIS
+   ============================================================ */
+(function(){
+  fillModulos('ch-mn');
+  fillMateriais('ch-mat');
+
+  window.chResetSk=()=>{
+    const mn=parseFloat(document.getElementById('ch-mn').value)||0;
+    document.getElementById('ch-sk').value=mn?(0.2*mn).toFixed(4):'';
+    chGeoCalc();
+  };
+
+  function chGeoCalc(){
+    const mn=parseFloat(document.getElementById('ch-mn').value);
+    const beta=parseFloat(document.getElementById('ch-beta').value)||0;
+    const Z1=parseInt(document.getElementById('ch-z1').value,10);
+    const Z2=parseInt(document.getElementById('ch-z2').value,10);
+    const N1=parseFloat(document.getElementById('ch-n1').value);
+    const skRaw=document.getElementById('ch-sk').value;
+    const sk=skRaw!==''?parseFloat(skRaw):(mn?0.2*mn:0);
+    const alphan=parseFloat(document.getElementById('ch-alpha').value)||20;
+    const cosB=Math.cos(rad(beta));
+    const mt=mn/cosB;
+    // ângulo de pressão transversal: tg αt = tg αn / cos β
+    const alphat=deg(Math.atan(Math.tan(rad(alphan))/cosB));
+    const geo=Z=>{
+      if(!mn||!Z)return null;
+      const d0=mn*Z/cosB;
+      const hf=mn+sk;
+      return{d0, dk:d0+2*mn, df:d0-2*hf};
+    };
+    const g1=geo(Z1),g2=geo(Z2);
+    const i=(Z1&&Z2)?Z2/Z1:null;
+    const cc=(g1&&g2)?(g1.d0+g2.d0)/2:null;
+    const n2=(i&&N1)?N1/i:null;
+    const skTag=Math.abs(sk-(mn?0.2*mn:0))<1e-6?' (DIN 867)':' ⚠ MANUAL';
+    const aTag=Math.abs(alphan-20)<0.01?' (DIN 867)':' ⚠ MANUAL';
+    const rows=[];
+    if(mn&&beta){
+      rows.push(['m_t=m_n/cos β',f(mt,4),'mm']);
+      rows.push(['t₀n=m_n·π · t₀t=m_t·π',`${f(mn*Math.PI,4)} · ${f(mt*Math.PI,4)}`,'mm']);
+      rows.push(['hₖ=m_n · h=2m_n',`${f(mn,2)} · ${f(2*mn,2)}`,'mm']);
+      rows.push(['Folga Sₖ',f(sk,4)+skTag,'mm']);
+      rows.push(['h_f=m_n+Sₖ · h_z=2m_n+Sₖ',`${f(mn+sk,4)} · ${f(2*mn+sk,4)}`,'mm']);
+    }
+    if(g1)rows.push(['Pinhão d₀₁ / dₖ₁ / d_f₁',`${f(g1.d0)} / ${f(g1.dk)} / ${f(g1.df)}`,'mm']);
+    if(g2)rows.push(['Coroa d₀₂ / dₖ₂ / d_f₂',`${f(g2.d0)} / ${f(g2.dk)} / ${f(g2.df)}`,'mm']);
+    if(i) rows.push(['Relação i=Z₂/Z₁',f4(i),'']);
+    if(cc)rows.push(['Dist. centros Cc',f(cc),'mm']);
+    if(n2)rows.push(['Rotação coroa n₂=n₁/i',f(n2,1),'rpm']);
+    if(Z1&&beta){const Zv1=Z1/Math.pow(cosB,3);rows.push(['Z_v pinhão (Z₁/cos³β)',f(Zv1,1),'→ ler q tab ext']);}
+    rows.push(['αn (normal)',f(alphan,1)+aTag,'°']);
+    rows.push(['αt (transversal) = arctg(tg αn / cos β)',f(alphat,2),'°']);
+    document.getElementById('ch-geo-lcd').innerHTML=lcdHTML(rows,
+      'β ∈ [8°,20°] usual · b ≥ p_t para ε_β ≥ 1 · Folga no flanco = 0');
+  }
+  window.chGeoCalc=chGeoCalc;
+  document.getElementById('ch-mn').addEventListener('change',()=>{
+    const skEl=document.getElementById('ch-sk');
+    const mn=parseFloat(document.getElementById('ch-mn').value)||0;
+    if(skEl.value===''||Math.abs(parseFloat(skEl.value)-0.2*(mn||1))<0.001)
+      skEl.value=mn?(0.2*mn).toFixed(4):'';
+    chGeoCalc();
+  });
+  ['ch-beta','ch-z1','ch-z2','ch-n1'].forEach(id=>document.getElementById(id).addEventListener('input',chGeoCalc));
+  ['ch-sk','ch-alpha'].forEach(id=>document.getElementById(id).addEventListener('input',chGeoCalc));
+  chGeoCalc();
+
+  // Z_v e verificação
+  function zvCalc(){
+    const Z=parseInt(document.getElementById('ch-zreal').value,10);
+    const beta=parseFloat(document.getElementById('ch-beta2').value)||0;
+    if(!Z||!beta){document.getElementById('ch-zv-lcd').innerHTML='';return;}
+    const cosB=Math.cos(rad(beta));
+    const Zv=Z/Math.pow(cosB,3);
+    const r=fatorQ(Math.round(Zv),'ext');
+    document.getElementById('ch-zv-lcd').innerHTML=lcdHTML([
+      ['Z_v = Z/cos³β',f(Zv,2),''],
+      ['q (lido pela tab ext c/ Z_v arred.)',r.q===null?'—':f4(r.q),''],
+    ],r.nota);
+  }
+  ['ch-zreal','ch-beta2'].forEach(id=>document.getElementById(id).addEventListener('input',zvCalc));
+  zvCalc();
+
+  function verCalc(){
+    const FT=parseFloat(document.getElementById('ch-ft').value);
+    const Qv=parseFloat(document.getElementById('ch-qv').value);
+    const PHI=parseFloat(document.getElementById('ch-phi').value);
+    const B=parseFloat(document.getElementById('ch-b').value);
+    const M=parseFloat(document.getElementById('ch-mn2').value);
+    const matRef=document.getElementById('ch-mat').value;
+    const mat=MATERIAIS.find(x=>x.ref===matRef);
+    const sig=calcFlexao(FT,Qv,PHI,B,M);
+    const sAdm=mat?mat.sigma:null;
+    const stamp=sig!==null&&sAdm!==null?(sig<=sAdm?{ok:true,text:'Aprovado'}:{ok:false,text:'Reprovado'}):null;
+    document.getElementById('ch-ver-lcd').innerHTML=lcdHTML([
+      ['σ_máx atuante',sig===null?'—':f(sig,2),'N/mm²'],
+      ['σ_material admissível',sAdm===null?'—':String(sAdm),'N/mm²'],
+      ['Utilização σ_máx/σ_mat',(sig!==null&&sAdm)?f(100*sig/sAdm,1):null,'%'],
+    ],'Usa m_n (módulo normal) na fórmula de flexão.',stamp);
+  }
+  ['ch-ft','ch-qv','ch-phi','ch-b','ch-mn2'].forEach(id=>document.getElementById(id).addEventListener('input',verCalc));
+  document.getElementById('ch-mat').addEventListener('change',verCalc);
+  verCalc();
+})();
+
+/* ============================================================
+   ABA: CÔNICAS
+   ============================================================ */
+(function(){
+  fillModulos('co-m');
+  fillMateriais('co-mat');
+
+  window.coResetSk=()=>{
+    const m=parseFloat(document.getElementById('co-m').value)||0;
+    document.getElementById('co-sk').value=m?(0.2*m).toFixed(4):'';
+    coGeoCalc();
+  };
+
+  function coGeoCalc(){
+    const m=parseFloat(document.getElementById('co-m').value);
+    const Z1=parseInt(document.getElementById('co-z1').value,10);
+    const Z2=parseInt(document.getElementById('co-z2').value,10);
+    const b=parseFloat(document.getElementById('co-b').value)||0;
+    if(!m||!Z1||!Z2){document.getElementById('co-geo-lcd').innerHTML='';return;}
+    const skRaw=document.getElementById('co-sk').value;
+    const sk=skRaw!==''?parseFloat(skRaw):(m?0.2*m:0);
+    const alpha=parseFloat(document.getElementById('co-alpha').value)||20;
+    const hf=m+sk;
+    const hz=2*m+sk;
+    const delta1=deg(Math.atan(Z1/Z2));
+    const delta2=90-delta1;
+    const Re=(m*Z1)/(2*Math.sin(rad(delta1)));
+    const dm1=2*Re*Math.sin(rad(delta1))*(1-b/(2*Re));
+    const dm2=2*Re*Math.sin(rad(delta2))*(1-b/(2*Re));
+    const mm=m*(1-b/(2*Re));
+    const Rv1=dm1/(2*Math.sin(rad(delta1)));
+    const dk1=m*Z1+2*m*Math.cos(rad(delta1));
+    const dk2=m*Z2+2*m*Math.cos(rad(delta2));
+    const skTag=Math.abs(sk-0.2*m)<1e-6?' (padrão)':' ⚠ MANUAL';
+    const aTag=Math.abs(alpha-20)<0.01?' (DIN 867)':' ⚠ MANUAL';
+    const rows=[
+      ['δ₁ (pinhão) / δ₂ (coroa)',`${f(delta1,2)}° / ${f(delta2,2)}°`,''],
+      ['Raio cônico externo Re',f(Re,2),'mm'],
+      ['d₀₁ / dₖ₁',`${f(m*Z1,2)} / ${f(dk1,2)}`,'mm'],
+      ['d₀₂ / dₖ₂',`${f(m*Z2,2)} / ${f(dk2,2)}`,'mm'],
+      ['Folga Sₖ',f(sk,4)+skTag,'mm'],
+      ['h_f=m+Sₖ · h_z=2m+Sₖ',`${f(hf,4)} · ${f(hz,4)}`,'mm'],
+    ];
+    if(b>0){
+      rows.push(['Re/b',f(Re/b,2),'(recom. Re/3<b<Re/4)']);
+      rows.push(['m_m=m·(1−b/2Re)',f(mm,4),'mm']);
+      rows.push(['d_m1 / d_m2',`${f(dm1,2)} / ${f(dm2,2)}`,'mm']);
+      rows.push(['Rv médio',f(Rv1,2),'mm']);
+    }
+    rows.push(['Relação i=Z₂/Z₁',f(Z2/Z1,4),'']);
+    rows.push(['α',f(alpha,1)+aTag,'°']);
+    rows.push(['F_r/F_t=tg α',f(Math.tan(rad(alpha)),4),'(adimensional)']);
+    document.getElementById('co-geo-lcd').innerHTML=lcdHTML(rows,
+      'Σ=90° · b ≤ Re/3 e b ≤ 10·m · Sₖ: 0,1 a 0,3·m (§8.1)');
+  }
+  window.coGeoCalc=coGeoCalc;
+  document.getElementById('co-m').addEventListener('change',()=>{
+    const skEl=document.getElementById('co-sk');
+    const m=parseFloat(document.getElementById('co-m').value)||0;
+    if(skEl.value===''||Math.abs(parseFloat(skEl.value)-0.2*(m||1))<0.001)
+      skEl.value=m?(0.2*m).toFixed(4):'';
+    coGeoCalc();
+  });
+  ['co-z1','co-z2','co-b'].forEach(id=>document.getElementById(id).addEventListener('input',coGeoCalc));
+  ['co-sk','co-alpha'].forEach(id=>document.getElementById(id).addEventListener('input',coGeoCalc));
+  coGeoCalc();
+
+  function verCalc(){
+    const HB=parseFloat(document.getElementById('co-hb').value);
+    const NP=parseFloat(document.getElementById('co-np').value);
+    const H=parseFloat(document.getElementById('co-dh').value);
+    const{W,p}=calcDesgaste(HB,NP,H);
+    document.getElementById('co-v1-lcd').innerHTML=lcdHTML([
+      ['W (fator durabilidade)',W===null?'—':f(W,3),''],
+      ['p_adm (no dm)',p===null?'—':f(p,2),'N/mm²'],
+    ]);
+    const FT=parseFloat(document.getElementById('co-ftm').value);
+    const Qv=parseFloat(document.getElementById('co-qv').value);
+    const PHI=parseFloat(document.getElementById('co-phi').value);
+    const B=parseFloat(document.getElementById('co-bv').value);
+    const M=parseFloat(document.getElementById('co-mm').value);
+    const mat=MATERIAIS.find(x=>x.ref===document.getElementById('co-mat').value);
+    const sig=calcFlexao(FT,Qv,PHI,B,M);
+    const sAdm=mat?mat.sigma:null;
+    const stamp=sig!==null&&sAdm!==null?(sig<=sAdm?{ok:true,text:'Aprovado'}:{ok:false,text:'Reprovado'}):null;
+    document.getElementById('co-v2-lcd').innerHTML=lcdHTML([
+      ['σ_máx (no d_m)',sig===null?'—':f(sig,2),'N/mm²'],
+      ['σ_material',sAdm===null?'—':String(sAdm),'N/mm²'],
+      ['Utilização',(sig!==null&&sAdm)?f(100*sig/sAdm,1):null,'%'],
+    ],'Todos os cálculos de resistência usam grandezas médias (d_m, m_m, F_tm).',stamp);
+  }
+  ['co-hb','co-np','co-dh','co-ftm','co-qv','co-phi','co-bv','co-mm'].forEach(id=>document.getElementById(id).addEventListener('input',verCalc));
+  document.getElementById('co-mat').addEventListener('change',verCalc);
+  verCalc();
+})();
+
+/* ============================================================
+   ABA: SEM-FIM
+   ============================================================ */
+(function(){
+  fillModulos('sf-m');
+
+  // tabela de rendimento η = tg γ / tg(γ+ρ)
+  // linhas: γ = 4°,6°,8°,11°,14°,16°,20°,25°,30°
+  // cols: ρ = 1°,2°,3°,4°,6°,8°,10°
+  const etas_gamas=[4,6,8,11,14,16,20,25,30];
+  const etas_rhos=[1,2,3,4,6,8,10];
+  const etaTbl=document.getElementById('sf-eta-tbl');
+  let th='<thead><tr><th>γ \\ ρ</th>';
+  etas_rhos.forEach(r=>th+=`<th>${r}°</th>`);
+  th+='</tr></thead><tbody>';
+  etas_gamas.forEach(g=>{
+    th+=`<tr><td style="color:var(--mut)">${g}°</td>`;
+    etas_rhos.forEach(r=>{
+      const eta=Math.tan(rad(g))/Math.tan(rad(g+r));
+      th+=`<td class="am">${(eta*100).toFixed(1).replace('.',',')}%</td>`;
+    });
+    th+='</tr>';
+  });
+  th+='</tbody>';
+  etaTbl.innerHTML=th;
+
+  function geoCalc(){
+    const m=parseFloat(document.getElementById('sf-m').value);
+    const Z1=parseInt(document.getElementById('sf-z1').value,10);
+    const Z2=parseInt(document.getElementById('sf-z2').value,10);
+    const qsf=parseFloat(document.getElementById('sf-q').value);
+    const rho=parseFloat(document.getElementById('sf-rho').value)||3;
+    const N1=parseFloat(document.getElementById('sf-n1').value);
+    if(!m||!Z1||!Z2||!qsf){document.getElementById('sf-geo-lcd').innerHTML='';return;}
+    const d1=m*qsf;   // d₁ = m·q_sf (diâm. primitivo do parafuso)
+    const d2=m*Z2;    // d₂ = m·Z₂ (diâm. primitivo da coroa)
+    const cc=(d1+d2)/2;
+    const gama=deg(Math.atan(Z1/qsf)); // ângulo de hélice do parafuso
+    const eta=Math.tan(rad(gama))/Math.tan(rad(gama+rho));
+    const i=Z2/Z1;
+    const n2=N1?N1/i:null;
+    const rows=[
+      ['d₁=m·q_sf (parafuso)',f(d1,2),'mm'],
+      ['d₂=m·Z₂ (coroa)',f(d2,2),'mm'],
+      ['Cc=(d₁+d₂)/2',f(cc,2),'mm'],
+      ['γ=arctg(Z₁/q_sf) — ângulo hélice',f(gama,2),'°'],
+      ['Relação i=Z₂/Z₁',f(i,1),''],
+      ['Rendimento η=tgγ/tg(γ+ρ)  [ρ='+f(rho,1)+'°]',f(eta*100,1),'%'],
+    ];
+    if(n2)rows.push(['Rotação coroa n₂=n₁/i',f(n2,1),'rpm']);
+    document.getElementById('sf-geo-lcd').innerHTML=lcdHTML(rows,
+      'Auto-travamento quando γ < ρ (η<0 ou γ < ρ). Coroa: bronzed/alumínio. Parafuso: aço cementado.');
+  }
+  document.getElementById('sf-m').addEventListener('change',geoCalc);
+  ['sf-z1','sf-z2','sf-q','sf-rho','sf-n1'].forEach(id=>document.getElementById(id).addEventListener('change',geoCalc));
+  ['sf-z2','sf-rho','sf-n1'].forEach(id=>document.getElementById(id).addEventListener('input',geoCalc));
+  geoCalc();
+})();
+
+/* ============================================================
+   ABA: ESTRIAS
+   ============================================================ */
+(function(){
+  function fillEstria(tbodyId,data){
+    const b=document.getElementById(tbodyId);
+    data.forEach(([d,D,bw,Z])=>{
+      const dm=(d+D)/2;
+      b.innerHTML+=`<tr><td>${d}</td><td>${D}</td><td>${bw}</td><td>${Z}</td><td class="am">${dm.toFixed(1)}</td></tr>`;
+    });
+  }
+  fillEstria('es-leve-tbody',ES_LEVE);
+  fillEstria('es-media-tbody',ES_MEDIA);
+  fillEstria('es-pesada-tbody',ES_PESADA);
+
+  function verCalc(){
+    const T=parseFloat(document.getElementById('es-T').value);
+    const dm=parseFloat(document.getElementById('es-dm').value);
+    const Z=parseFloat(document.getElementById('es-Z').value);
+    const h=parseFloat(document.getElementById('es-h').value);
+    const L=parseFloat(document.getElementById('es-L').value);
+    const psi=parseFloat(document.getElementById('es-psi').value)||0.75;
+    const padm=parseFloat(document.getElementById('es-padm').value);
+    const p=(T>0&&dm>0&&Z>0&&h>0&&L>0)?2*T/(dm*Z*h*L*psi):null;
+    const stamp=p!==null&&padm>0?(p<=padm?{ok:true,text:'Aprovado'}:{ok:false,text:'Reprovado'}):null;
+    document.getElementById('es-ver-lcd').innerHTML=lcdHTML([
+      ['Pressão nos flancos p',p===null?'—':f(p,2),'N/mm²'],
+      ['p_adm informada',padm>0?f(padm,0):'—','N/mm²'],
+      ['p/p_adm',(p!==null&&padm>0)?f(100*p/padm,1):null,'%'],
+    ],'ψ=0,75 padrão (75% dos flancos em contato efetivo).',stamp);
+  }
+  ['es-T','es-dm','es-Z','es-h','es-L','es-psi','es-padm'].forEach(id=>document.getElementById(id).addEventListener('input',verCalc));
+  verCalc();
+})();
+
+/* ============================================================
+   ABA: MATERIAIS
+   ============================================================ */
+(function(){
+  const sel=document.getElementById('mat-ref-sel');
+  MATERIAIS.forEach(m=>{
+    const o=document.createElement('option');
+    o.value=m.ref; o.textContent=m.ref;
+    if(m.ref==='SAE 1040')o.selected=true;
     sel.appendChild(o);
   });
-
-  /* povoa o select de materiais da aba verificação também */
-  const vSel = document.getElementById('v-mat');
-  MATERIAIS.filter(x => x.sigma !== null).forEach(m => {
-    const o = document.createElement('option');
-    o.value = m.ref;
-    o.textContent = `${m.ref} — ${m.sigma} N/mm²`;
-    if (m.ref === 'SAE 1040') o.selected = true;
-    vSel.appendChild(o);
-  });
-
-  function calc() {
-    const mat = MATERIAIS.find(x => x.ref === sel.value);
-    const hbTxt = mat.hb ? `${mat.hb[0].toLocaleString('pt-BR')} – ${mat.hb[1].toLocaleString('pt-BR')}` : '—';
-    const nota  = mat.tt
-      ? 'SAE 4320, 4340, 8620 e 8640 com tratamento térmico podem superar a dureza tabelada — usar escala Rockwell C (limite Brinell: 600 N/mm²).'
-      : 'Projeto ideal: tensão atuante próxima do limite inferior da tensão admissível.';
-
-    document.getElementById('mat-lcd').innerHTML = lcdHTML([
-      ['Tensão admissível σ (Tabela 4)', mat.sigma === null ? 'consultar' : String(mat.sigma), mat.sigma === null ? '' : 'N/mm²'],
-      ['Dureza Brinell HB', hbTxt, mat.hb ? 'N/mm²' : ''],
-    ], nota);
-
-    const wrap = document.getElementById('mat-comp-wrap');
-    const tbl  = document.getElementById('mat-comp');
-    const refEl = document.getElementById('mat-ref-txt');
-
-    if (mat.comp) {
-      const cols = ['Villares','DIN','C','Ni','Cr','Mo','Mn','Si','P','S'];
-      const vals = [mat.comp.villares,mat.comp.din,mat.comp.C,mat.comp.Ni,
-                    mat.comp.Cr,mat.comp.Mo,mat.comp.Mn,mat.comp.Si,mat.comp.P,mat.comp.S];
-      tbl.innerHTML = `<thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead>
-        <tbody><tr>${vals.map(v=>`<td>${v}</td>`).join('')}</tr></tbody>`;
+  function calc(){
+    const mat=MATERIAIS.find(x=>x.ref===sel.value);
+    const hbTxt=mat.hb?`${mat.hb[0].toLocaleString('pt-BR')} – ${mat.hb[1].toLocaleString('pt-BR')}`:'—';
+    const nota=mat.tt?'Com TT pode superar HB da tabela — usar Rockwell C (max Brinell=600 N/mm²).':'Projeto ideal: σ_máx próxima do limite inferior.';
+    document.getElementById('mat-lcd').innerHTML=lcdHTML([
+      ['Tensão admissível σ (Tabela 4)',mat.sigma===null?'consultar':String(mat.sigma),mat.sigma===null?'':'N/mm²'],
+      ['Dureza Brinell HB',hbTxt,mat.hb?'N/mm²':''],
+    ],nota);
+    const wrap=document.getElementById('mat-comp-wrap');
+    const tbl=document.getElementById('mat-comp-tbl');
+    const ref=document.getElementById('mat-ref-txt');
+    if(mat.comp){
+      const cols=['Villares','DIN','C','Ni','Cr','Mo','Mn','Si','P','S'];
+      const vals=[mat.comp.villares,mat.comp.din,mat.comp.C,mat.comp.Ni,mat.comp.Cr,mat.comp.Mo,mat.comp.Mn,mat.comp.Si,mat.comp.P,mat.comp.S];
+      tbl.innerHTML=`<thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody><tr>${vals.map(v=>`<td>${v}</td>`).join('')}</tr></tbody>`;
       wrap.classList.remove('hidden');
-      refEl.textContent = 'Composição em % — valores médios (tolerância ±10%). Fonte: Melconian, itens 6.5, 6.6 e 6.14 (p. 98–99 e 110).';
+      ref.textContent='Composição em % — tolerância ±10%. Melconian §6.5, 6.6, 6.14 (p.98–110).';
     } else {
       wrap.classList.add('hidden');
-      refEl.textContent = 'Fonte: Melconian, itens 6.5 e 6.14 (p. 98 e 110).';
+      ref.textContent='Melconian §6.5, 6.14 (p.98, 110).';
     }
   }
-
-  sel.addEventListener('change', calc);
+  sel.addEventListener('change',calc);
   calc();
 })();
 
-/* ================================================================
-   ABA 4 — FATOR φ AGMA
-   ================================================================ */
-(function initPhi() {
-  const tbody  = document.getElementById('phi-tbody');
-  const busca  = document.getElementById('phi-busca');
-  const lcdEl  = document.getElementById('phi-lcd');
-  let selIdx   = null;
-
-  const fv = v => v === null ? '—' : v.toFixed(2).replace('.',',');
-
-  function renderLista(filtro) {
-    const q = norm(filtro);
-    tbody.innerHTML = '';
-    let count = 0;
-    AGMA.forEach((row, idx) => {
-      if (q && !norm(row[0]).includes(q) && !norm(row[1]).includes(q)) return;
-      const tr = document.createElement('tr');
-      tr.className = 'clic' + (idx === selIdx ? ' sel' : '');
-      tr.innerHTML = `<td class="left"><span class="app-grupo">${row[0]}</span><span class="app-nome">${row[1]}</span></td>
-        <td class="amber">${fv(row[2])}</td><td class="amber">${fv(row[3])}</td>`;
-      tr.addEventListener('click', () => {
-        selIdx = idx;
-        document.querySelectorAll('#phi-tbody tr').forEach(r => r.classList.remove('sel'));
+/* ============================================================
+   ABA: AGMA
+   ============================================================ */
+(function(){
+  const tbody=document.getElementById('agma-tbody');
+  const busca=document.getElementById('agma-busca');
+  const lcdEl=document.getElementById('agma-lcd');
+  let selIdx=null;
+  const fv=v=>v===null?'—':v.toFixed(2).replace('.',',');
+  function render(filtro){
+    const q=norm(filtro);
+    tbody.innerHTML='';
+    AGMA.forEach((row,idx)=>{
+      if(q&&!norm(row[0]).includes(q)&&!norm(row[1]).includes(q))return;
+      const tr=document.createElement('tr');
+      tr.className='tr-clic'+(idx===selIdx?' sel':'');
+      tr.innerHTML=`<td><span class="app-grupo">${row[0]}</span><span class="app-nome">${row[1]}</span></td>
+        <td class="am">${fv(row[2])}</td><td class="am">${fv(row[3])}</td>`;
+      tr.addEventListener('click',()=>{
+        selIdx=idx;
+        document.querySelectorAll('#agma-tbody tr').forEach(r=>r.classList.remove('sel'));
         tr.classList.add('sel');
-        lcdEl.innerHTML = lcdHTML([
-          ['Aplicação', row[1].length > 30 ? row[1].slice(0,30)+'…' : row[1], ''],
-          ['φ — serviço 10 h', fv(row[2]), ''],
-          ['φ — serviço 24 h', fv(row[3]), ''],
-        ], `Grupo: ${row[0]}`);
+        lcdEl.innerHTML=lcdHTML([
+          ['Aplicação',row[1].length>28?row[1].slice(0,28)+'…':row[1],''],
+          ['φ — 10 h',fv(row[2]),''],
+          ['φ — 24 h',fv(row[3]),''],
+        ],`Grupo: ${row[0]}`);
         lcdEl.classList.remove('hidden');
       });
       tbody.appendChild(tr);
-      count++;
     });
-    if (!count) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = '<td colspan="3" style="text-align:center;color:var(--mut);padding:14px">Nenhuma aplicação encontrada.</td>';
+    if(!tbody.children.length){
+      const tr=document.createElement('tr');
+      tr.innerHTML='<td colspan="3" style="text-align:center;color:var(--mut);padding:12px">Nenhuma aplicação encontrada.</td>';
       tbody.appendChild(tr);
     }
   }
-
-  busca.addEventListener('input', () => { selIdx = null; lcdEl.classList.add('hidden'); renderLista(busca.value); });
-  renderLista('');
-
-  /* Tabela 2 */
-  const t2btn = document.getElementById('phi-t2-btn');
-  const t2div = document.getElementById('phi-t2');
-  let t2open = false;
-  t2btn.addEventListener('click', () => {
-    t2open = !t2open;
-    t2div.classList.toggle('hidden', !t2open);
-    t2btn.textContent = (t2open ? 'Ocultar' : 'Ver') + ' Tabela 2 — motores a explosão';
+  busca.addEventListener('input',()=>{selIdx=null;lcdEl.classList.add('hidden');render(busca.value);});
+  render('');
+  const t2btn=document.getElementById('agma-t2-btn');
+  const t2div=document.getElementById('agma-t2');
+  let t2=false;
+  t2btn.addEventListener('click',()=>{
+    t2=!t2;t2div.classList.toggle('hidden',!t2);
+    t2btn.textContent=(t2?'Ocultar':'Ver')+' Tabela 2 — motores a explosão';
   });
 })();
 
-/* ================================================================
-   ABA 5 — VERIFICAÇÃO
-   ================================================================ */
-(function initVer() {
-  function calcDesgaste() {
-    const HB = parseFloat(document.getElementById('v-hb').value);
-    const NP = parseFloat(document.getElementById('v-np').value);
-    const H  = parseFloat(document.getElementById('v-h').value);
-    const W  = (NP>0&&H>0) ? (60*NP*H)/1e6 : null;
-    const p  = (W&&HB>0)   ? (0.487*HB)/Math.pow(W,1/6) : null;
-    document.getElementById('v-lcd1').innerHTML = lcdHTML([
-      ['Fator de durabilidade W', W === null ? '—' : f2(W,3), ''],
-      ['Pressão admissível p_adm', p === null ? '—' : f2(p,2), 'N/mm²'],
-    ]);
-  }
+/* ============================================================
+   NAVEGAÇÃO TIPO + SUBABAS
+   ============================================================ */
+document.getElementById('tipo-nav').addEventListener('click',e=>{
+  const btn=e.target.closest('.tipo-btn');
+  if(!btn)return;
+  const tipo=btn.dataset.tipo;
+  document.querySelectorAll('.tipo-btn').forEach(b=>b.classList.toggle('ativo',b===btn));
+  document.querySelectorAll('.tipo-panel').forEach(p=>p.classList.toggle('ativo',p.id==='tp-'+tipo));
+});
 
-  function calcFlexao() {
-    const FT  = parseFloat(document.getElementById('v-ft').value);
-    const Qv  = parseFloat(document.getElementById('v-q').value);
-    const PHI = parseFloat(document.getElementById('v-phi').value);
-    const B   = parseFloat(document.getElementById('v-b').value);
-    const M   = parseFloat(document.getElementById('v-m').value);
-    const matRef = document.getElementById('v-mat').value;
-    const mat = MATERIAIS.find(x => x.ref === matRef);
-
-    const sig = (FT>0&&Qv>0&&PHI>0&&B>0&&M>0) ? (FT*Qv*PHI)/(B*M) : null;
-    const sAdm = mat ? mat.sigma : null;
-    let stamp = null;
-    if (sig !== null && sAdm !== null) {
-      stamp = sig <= sAdm ? {ok:true,text:'Aprovado'} : {ok:false,text:'Reprovado'};
-    }
-    const pct = (sig!==null&&sAdm) ? fPct(100*sig/sAdm) : '—';
-
-    document.getElementById('v-lcd2').innerHTML = lcdHTML([
-      ['Tensão atuante σ_máx',   sig  === null ? '—' : f2(sig,2),  'N/mm²'],
-      ['Tensão admissível σ_mat', sAdm === null ? '—' : String(sAdm),'N/mm²'],
-      ['Utilização σ_máx / σ_mat', pct, '%'],
-    ], 'Projeto ideal: σ_máx próxima do limite inferior da admissível. Acima → risco de ruptura na base do dente.', stamp);
-  }
-
-  ['v-hb','v-np','v-h'].forEach(id => document.getElementById(id).addEventListener('input', calcDesgaste));
-  ['v-ft','v-q','v-phi','v-b','v-m','v-mat'].forEach(id => document.getElementById(id).addEventListener('input', calcFlexao));
-  document.getElementById('v-mat').addEventListener('change', calcFlexao);
-  calcDesgaste();
-  calcFlexao();
-})();
-
-/* ================================================================
-   NAVEGAÇÃO ENTRE ABAS
-   ================================================================ */
-document.getElementById('nav').addEventListener('click', e => {
-  const btn = e.target.closest('.tab');
-  if (!btn) return;
-  const id = btn.dataset.aba;
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('ativo', t === btn));
-  document.querySelectorAll('.aba').forEach(a => a.classList.toggle('ativa', a.id === 'aba-'+id));
+document.querySelectorAll('.sub-nav').forEach(nav=>{
+  nav.addEventListener('click',e=>{
+    const btn=e.target.closest('.sub-btn');
+    if(!btn)return;
+    const sub=btn.dataset.sub;
+    nav.querySelectorAll('.sub-btn').forEach(b=>b.classList.toggle('ativo',b===btn));
+    // encontrar o tipo-panel pai e alternar os sub-panels dentro dele
+    const panel=nav.closest('.tipo-panel');
+    panel.querySelectorAll('.sub-panel').forEach(p=>p.classList.toggle('ativo',p.id==='sp-'+sub));
+  });
 });
 </script>
 </body>
