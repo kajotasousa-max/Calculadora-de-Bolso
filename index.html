@@ -87,7 +87,7 @@ footer{font-size:9px;color:var(--dim);margin-top:12px;line-height:1.6;text-align
     </div>
   </div>
   <div class="hd-meta">
-    <div class="hd-meta-cell"><div class="hd-meta-k">Fonte</div><div class="hd-meta-v">Folha da oficina</div></div>
+    <div class="hd-meta-cell"><div class="hd-meta-k">Fonte</div><div class="hd-meta-v">Ferramenta da oficina</div></div>
     <div class="hd-meta-cell"><div class="hd-meta-k">Eixos</div><div class="hd-meta-v">Σ = 90°</div></div>
     <div class="hd-meta-cell"><div class="hd-meta-k">Cálculo</div><div class="hd-meta-v">Cada eng. c/ seu Z e δ</div></div>
   </div>
@@ -109,7 +109,7 @@ footer{font-size:9px;color:var(--dim);margin-top:12px;line-height:1.6;text-align
 
   <div class="cfg-box" id="cfg">
     <div class="cfg-head" onclick="document.getElementById('cfg').classList.toggle('aberto')">
-      <div class="sec-label">Constantes da folha</div>
+      <div class="sec-label">Constantes</div>
       <div class="cfg-toggle" id="cfg-tgl">Ajustar ▾</div>
     </div>
     <div class="cfg-body">
@@ -119,8 +119,8 @@ footer{font-size:9px;color:var(--dim);margin-top:12px;line-height:1.6;text-align
         <div class="cfg-item"><div class="sec-label">Alívio [′] (10)</div><input type="number" id="k-ali" value="10" step="1" min="0"></div>
         <div class="cfg-item"><div class="sec-label">Máquina (75)</div><input type="number" id="k-maq" value="75" step="1" min="0.0001"></div>
       </div>
-      <button class="cfg-reset" onclick="resetCfg()">Voltar ao padrão da folha</button>
-      <div class="cfg-warn">⚠ Constantes fora do padrão da folha — anote na placa se validar.</div>
+      <button class="cfg-reset" onclick="resetCfg()">Voltar ao padrão</button>
+      <div class="cfg-warn">⚠ Constantes fora do padrão — anote na placa se validar.</div>
     </div>
   </div>
 
@@ -129,7 +129,7 @@ footer{font-size:9px;color:var(--dim);margin-top:12px;line-height:1.6;text-align
 </div>
 
 <script>
-/* ===== CONFIG (constantes da folha) ===== */
+/* ===== CONFIG (constantes) ===== */
 const PADRAO={ext:2, int:2.33, ali:10, maq:75};
 function cfg(){
   return{
@@ -163,7 +163,7 @@ function grausParaGMS(dec){
 }
 function gmsParaGraus(g,m,s){return (g||0)+(m||0)/60+(s||0)/3600;}
 
-/* ===== CÁLCULOS — um por linha da folha ===== */
+/* ===== CÁLCULOS — um por linha ===== */
 function calcularAnguloPrimitivo(Z,Zpar){        // Z ÷ Z_par : shift tang
   return deg(Math.atan(Z/Zpar));
 }
