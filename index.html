@@ -34,6 +34,7 @@ header{border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bot
 
 main{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 12px 16px}
 .sec-label{font-family:var(--fh);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin-bottom:4px}
+.eng-label{font-family:var(--fh);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin:14px 0 4px}
 .formula{font-family:var(--fm);font-size:11.5px;color:var(--amber);border:1px solid var(--line-soft);border-left:3px solid var(--amber-d);background:var(--panel-deep);border-radius:4px;padding:7px 11px;margin-bottom:12px;overflow-x:auto;white-space:nowrap}
 .fields{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:6px}
 .field{flex:1 1 110px;min-width:100px}
@@ -41,7 +42,7 @@ input[type=number]{width:100%;background:var(--panel-deep);color:var(--ink);bord
 input[type=number]:focus{border-color:var(--amber)}
 input[type=number]::-webkit-inner-spin-button{opacity:.3}
 
-.lcd{background:linear-gradient(180deg,var(--lcd),var(--lcd-dim));border-radius:6px;border:1px solid #0E1408;box-shadow:inset 0 2px 10px rgba(20,30,8,.45),inset 0 -1px 0 rgba(255,255,255,.35);padding:11px 13px;margin-top:12px;position:relative}
+.lcd{background:linear-gradient(180deg,var(--lcd),var(--lcd-dim));border-radius:6px;border:1px solid #0E1408;box-shadow:inset 0 2px 10px rgba(20,30,8,.45),inset 0 -1px 0 rgba(255,255,255,.35);padding:11px 13px;position:relative}
 .lcd-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px dashed rgba(28,38,19,.25);flex-wrap:wrap}
 .lcd-row:last-of-type{border-bottom:none}
 .lcd-k{font-family:var(--fh);font-size:10px;letter-spacing:.05em;color:var(--lcd-mut);text-transform:uppercase}
@@ -57,7 +58,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:.3}
 .cfg-body{display:none;margin-top:9px}
 .cfg-box.aberto .cfg-body{display:block}
 .cfg-grid{display:flex;flex-wrap:wrap;gap:8px}
-.cfg-item{flex:1 1 90px;min-width:84px}
+.cfg-item{flex:1 1 100px;min-width:90px}
 .cfg-item .sec-label{font-size:8px}
 .cfg-item input{font-size:13px;padding:6px 8px}
 .cfg-reset{margin-top:9px;background:transparent;border:1px solid var(--line);color:var(--dim);border-radius:3px;padding:4px 9px;font-family:var(--fh);font-size:9px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
@@ -83,26 +84,29 @@ footer{font-size:9px;color:var(--dim);margin-top:12px;line-height:1.6;text-align
     </div>
     <div class="hd-text">
       <div class="hd-title">GLEASON CÔNICA RETA</div>
-      <div class="hd-sub">Ficha da placa · cálculo da menor</div>
+      <div class="hd-sub">Ficha da placa · pinhão e coroa</div>
     </div>
   </div>
   <div class="hd-meta">
     <div class="hd-meta-cell"><div class="hd-meta-k">Fonte</div><div class="hd-meta-v">Folha da oficina</div></div>
     <div class="hd-meta-cell"><div class="hd-meta-k">Eixos</div><div class="hd-meta-v">Σ = 90°</div></div>
-    <div class="hd-meta-cell"><div class="hd-meta-k">Referência</div><div class="hd-meta-v">Menor engrenagem</div></div>
+    <div class="hd-meta-cell"><div class="hd-meta-k">Cálculo</div><div class="hd-meta-v">Cada eng. c/ seu Z e δ</div></div>
   </div>
 </header>
 
 <main>
-  <div class="formula">δ=arctg(Z₁/Z₂) · Ext=δ+arctg(sen δ·2/Z) · Int=δ−arctg(sen δ·2,33/Z)</div>
-  <div class="formula">Abertura=δ−Int+10′ · Constante=30/Z · Envolvente=Z÷75÷sen δ</div>
+  <div class="formula">δ=arctg(Z/Z_par) · Ext=δ+arctg(sen δ·2/Z) · Int=δ−arctg(sen δ·2,33/Z)</div>
+  <div class="formula">Abertura=δ−Int+10′ · Envolvente=Z÷75÷sen δ</div>
 
   <div class="fields">
     <div class="field"><div class="sec-label">Dentes Z₁</div><input type="number" id="z1" value="15" min="1" inputmode="numeric"></div>
     <div class="field"><div class="sec-label">Dentes Z₂</div><input type="number" id="z2" value="40" min="1" inputmode="numeric"></div>
   </div>
 
-  <div class="lcd" id="lcd"></div>
+  <div class="eng-label" id="lbl-a"></div>
+  <div class="lcd" id="lcd-a"></div>
+  <div class="eng-label" id="lbl-b"></div>
+  <div class="lcd" id="lcd-b"></div>
 
   <div class="cfg-box" id="cfg">
     <div class="cfg-head" onclick="document.getElementById('cfg').classList.toggle('aberto')">
@@ -114,7 +118,6 @@ footer{font-size:9px;color:var(--dim);margin-top:12px;line-height:1.6;text-align
         <div class="cfg-item"><div class="sec-label">Externo (2)</div><input type="number" id="k-ext" value="2" step="0.01" min="0"></div>
         <div class="cfg-item"><div class="sec-label">Interno (2,33)</div><input type="number" id="k-int" value="2.33" step="0.01" min="0"></div>
         <div class="cfg-item"><div class="sec-label">Alívio [′] (10)</div><input type="number" id="k-ali" value="10" step="1" min="0"></div>
-        <div class="cfg-item"><div class="sec-label">Divisor (30)</div><input type="number" id="k-div" value="30" step="1" min="0"></div>
         <div class="cfg-item"><div class="sec-label">Máquina (75)</div><input type="number" id="k-maq" value="75" step="1" min="0.0001"></div>
       </div>
       <button class="cfg-reset" onclick="resetCfg()">Voltar ao padrão da folha</button>
@@ -123,27 +126,26 @@ footer{font-size:9px;color:var(--dim);margin-top:12px;line-height:1.6;text-align
   </div>
 
   <div class="ref">
-    Todos os ângulos calculados a partir da <strong>menor</strong> engrenagem, como na folha.
-    Envolvente é razão adimensional (relação de câmbio) — não é ângulo.
-    Exemplo da folha (15/40): primitivo 20°33′ · externo 23°13′ · interno 17°23′.
+    Cada engrenagem é calculada com o próprio Z e o próprio δ (δ da maior = 90° − δ da menor).
+    Envolvente é razão adimensional (relação de câmbio) — não é ângulo, e dá o mesmo valor pelas duas engrenagens.
+    Exemplo da folha (15/40, calculado pela Z15): primitivo 20°33′ · externo 23°13′ · interno 17°23′.
   </div>
 </main>
 
 <footer>
-  Sequência de teclas transcrita da folha da oficina · constantes 2 · 2,33 · 10′ · 30 · 75 editáveis.<br>
+  Sequência de teclas transcrita da folha da oficina · constantes 2 · 2,33 · 10′ · 75 editáveis.<br>
   Valide contra peça boa conhecida antes de liberar lote.
 </footer>
 </div>
 
 <script>
 /* ===== CONFIG (constantes da folha) ===== */
-const PADRAO={ext:2, int:2.33, ali:10, div:30, maq:75};
+const PADRAO={ext:2, int:2.33, ali:10, maq:75};
 function cfg(){
   return{
     ext:parseFloat(document.getElementById('k-ext').value)||0,
     int:parseFloat(document.getElementById('k-int').value)||0,
     ali:parseFloat(document.getElementById('k-ali').value)||0,
-    div:parseFloat(document.getElementById('k-div').value)||0,
     maq:parseFloat(document.getElementById('k-maq').value)||0
   };
 }
@@ -151,7 +153,6 @@ function resetCfg(){
   document.getElementById('k-ext').value=PADRAO.ext;
   document.getElementById('k-int').value=PADRAO.int;
   document.getElementById('k-ali').value=PADRAO.ali;
-  document.getElementById('k-div').value=PADRAO.div;
   document.getElementById('k-maq').value=PADRAO.maq;
   calcular();
 }
@@ -173,8 +174,8 @@ function grausParaGMS(dec){
 function gmsParaGraus(g,m,s){return (g||0)+(m||0)/60+(s||0)/3600;}
 
 /* ===== CÁLCULOS — um por linha da folha ===== */
-function calcularAnguloPrimitivo(Z,Zm){          // Z1 ÷ Z2 : shift tang
-  return deg(Math.atan(Z/Zm));
+function calcularAnguloPrimitivo(Z,Zpar){        // Z ÷ Z_par : shift tang
+  return deg(Math.atan(Z/Zpar));
 }
 function calcularAnguloExterno(delta,Z,c){       // sin δ × (2÷Z) : shift tang → + δ
   return delta+deg(Math.atan(Math.sin(rad(delta))*c.ext/Z));
@@ -185,9 +186,6 @@ function calcularAnguloInterno(delta,Z,c){       // sin δ × (2,33÷Z) : shift 
 function calcularAberturaFacao(delta,interno,c){ // δ − interno + 10′
   return delta-interno+c.ali/60;
 }
-function calcularConstante(Z,c){                 // 30 ÷ Z
-  return c.div/Z;
-}
 function calcularEnvolvente(Z,delta,c){          // Z ÷ 75 ÷ sen δ  (razão, sem shift tang)
   return Z/c.maq/Math.sin(rad(delta));
 }
@@ -195,57 +193,57 @@ function calcularEnvolvente(Z,delta,c){          // Z ÷ 75 ÷ sen δ  (razão, 
 /* ===== FORMATAÇÃO ===== */
 const fd=(v,d)=>v==null||isNaN(v)||!isFinite(v)?'—':(+v).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
 
-/* ===== EXEMPLO DA FOLHA p/ conferência 15/40 ===== */
+/* ===== EXEMPLO DA FOLHA p/ conferência (calculado pela Z15) ===== */
 const FOLHA_1540={prim:'20°33′',ext:'23°13′',int:'17°23′'};
+
+/* Monta o bloco de uma engrenagem */
+function blocoEngrenagem(Z,Zpar,c,mostrarFolha){
+  const delta=calcularAnguloPrimitivo(Z,Zpar);
+  const ext=calcularAnguloExterno(delta,Z,c);
+  const int_=calcularAnguloInterno(delta,Z,c);
+  const abe=calcularAberturaFacao(delta,int_,c);
+  const env=calcularEnvolvente(Z,delta,c);
+
+  const flag=k=>mostrarFolha?` <span class="lcd-flag">folha: ${FOLHA_1540[k]}</span>`:'';
+  let h='';
+  const row=(k,v,u,extra)=>h+=`<div class="lcd-row"><span class="lcd-k">${k}${extra||''}</span><span class="lcd-v">${v}${u?`<span class="lcd-u">${u}</span>`:''}</span></div>`;
+
+  row('∠ Primitivo δ',grausParaGMS(delta),fd(delta,4)+'°',flag('prim'));
+  row('∠ Externo',grausParaGMS(ext),fd(ext,4)+'°',flag('ext'));
+  row('∠ Interno',grausParaGMS(int_),fd(int_,4)+'°',flag('int'));
+  row('Abertura dos facões',grausParaGMS(abe),fd(abe,4)+'°');
+  row('Envolvente Z÷'+fd(c.maq,0)+'÷sen δ',fd(env,5),'razão');
+}
 
 function calcular(){
   const z1=parseInt(document.getElementById('z1').value,10);
   const z2=parseInt(document.getElementById('z2').value,10);
   const c=cfg();
-  const lcd=document.getElementById('lcd');
 
-  /* aviso visual se constantes alteradas */
   const alterado=Math.abs(c.ext-PADRAO.ext)>1e-9||Math.abs(c.int-PADRAO.int)>1e-9||
-                 Math.abs(c.ali-PADRAO.ali)>1e-9||Math.abs(c.div-PADRAO.div)>1e-9||
-                 Math.abs(c.maq-PADRAO.maq)>1e-9;
+                 Math.abs(c.ali-PADRAO.ali)>1e-9||Math.abs(c.maq-PADRAO.maq)>1e-9;
   document.getElementById('cfg').classList.toggle('alterado',alterado);
   document.getElementById('cfg-tgl').textContent=alterado?'⚠ Alterado ▾':'Ajustar ▾';
 
+  const lblA=document.getElementById('lbl-a'), lcdA=document.getElementById('lcd-a');
+  const lblB=document.getElementById('lbl-b'), lcdB=document.getElementById('lcd-b');
+
   if(!z1||!z2||z1<1||z2<1){
-    lcd.innerHTML='<div class="lcd-note">Informe Z₁ e Z₂ para calcular.</div>';
+    lblA.textContent='';lblB.textContent='';lcdB.innerHTML='';
+    lcdA.innerHTML='<div class="lcd-note">Informe Z₁ e Z₂ para calcular.</div>';
     return;
   }
 
-  const Z=Math.min(z1,z2), Zm=Math.max(z1,z2);   // folha: tudo "da menor"
-  const delta=calcularAnguloPrimitivo(Z,Zm);
-  const ext=calcularAnguloExterno(delta,Z,c);
-  const int_=calcularAnguloInterno(delta,Z,c);
-  const abe=calcularAberturaFacao(delta,int_,c);
-  const cte=calcularConstante(Z,c);
-  const env=calcularEnvolvente(Z,delta,c);
+  const eh1540=(Math.min(z1,z2)===15&&Math.max(z1,z2)===40)&&!alterado;
 
-  const eh1540=(Z===15&&Zm===40);
-  const flag=(k)=>eh1540&&!alterado?` <span class="lcd-flag">folha: ${FOLHA_1540[k]}</span>`:'';
-
-  let h='';
-  const row=(k,v,u,extra)=>h+=`<div class="lcd-row"><span class="lcd-k">${k}${extra||''}</span><span class="lcd-v">${v}${u?`<span class="lcd-u">${u}</span>`:''}</span></div>`;
-
-  row('Menor engrenagem Z',Z+' <span class="lcd-u">dentes · maior '+Zm+'</span>','');
-  row('∠ Primitivo δ',grausParaGMS(delta),fd(delta,4)+'°',flag('prim'));
-  row('∠ Externo',grausParaGMS(ext),fd(ext,4)+'°',flag('ext'));
-  row('∠ Interno',grausParaGMS(int_),fd(int_,4)+'°',flag('int'));
-  row('Abertura dos facões',grausParaGMS(abe),fd(abe,4)+'°');
-  row('Constante '+fd(c.div,0)+'÷Z',fd(cte,4),'voltas');
-  row('Envolvente Z÷'+fd(c.maq,0)+'÷sen δ',fd(env,5),'razão');
-
-  let nota='∠ primitivo da maior = 90° − δ = '+grausParaGMS(90-delta)+'.';
-  if(eh1540&&!alterado)nota+=' Interno diverge 3′ da folha — as teclas da própria folha dão 17°26′; confirme em peça boa.';
-  if(Z<13)nota+=' ⚠ Z<13 — risco de interferência.';
-  if(Z>c.maq)nota+=' Z maior que a constante da máquina — confira se a referência é mesmo a menor.';
-  lcd.innerHTML=h+'<div class="lcd-note">'+nota+'</div>';
+  /* Bloco A = engrenagem Z1 · Bloco B = engrenagem Z2, cada uma com seu Z e seu δ */
+  lblA.textContent='Engrenagem Z'+z1+(z1===z2?'':(z1<z2?' (menor)':' (maior)'));
+  lblB.textContent='Engrenagem Z'+z2+(z1===z2?'':(z2<z1?' (menor)':' (maior)'));
+  lcdA.innerHTML=blocoEngrenagem(z1,z2,c,eh1540&&z1===15);
+  lcdB.innerHTML=blocoEngrenagem(z2,z1,c,eh1540&&z2===15);
 }
 
-['z1','z2','k-ext','k-int','k-ali','k-div','k-maq'].forEach(id=>
+['z1','z2','k-ext','k-int','k-ali','k-maq'].forEach(id=>
   document.getElementById(id).addEventListener('input',calcular));
 calcular();
 </script>
