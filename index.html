@@ -49,7 +49,6 @@ input[type=number]::-webkit-inner-spin-button{opacity:.3}
 .lcd-v{font-family:var(--fm);font-weight:600;font-size:16px;color:var(--lcd-ink);white-space:nowrap}
 .lcd-u{font-size:10px;font-weight:400;color:var(--lcd-mut);margin-left:5px}
 .lcd-note{font-family:var(--fm);font-size:10px;color:var(--lcd-mut);margin-top:7px;line-height:1.45}
-.lcd-flag{font-size:9px;color:#8C2F1F;font-weight:600}
 
 .cfg-box{margin-top:12px;padding:9px 10px;background:var(--panel-deep);border:1px solid var(--line-soft);border-left:3px solid var(--amber-d);border-radius:4px}
 .cfg-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
@@ -125,17 +124,8 @@ footer{font-size:9px;color:var(--dim);margin-top:12px;line-height:1.6;text-align
     </div>
   </div>
 
-  <div class="ref">
-    Cada engrenagem é calculada com o próprio Z e o próprio δ (δ da maior = 90° − δ da menor).
-    Envolvente é razão adimensional (relação de câmbio) — não é ângulo, e dá o mesmo valor pelas duas engrenagens.
-    Exemplo da folha (15/40, calculado pela Z15): primitivo 20°33′ · externo 23°13′ · interno 17°23′.
-  </div>
 </main>
 
-<footer>
-  Sequência de teclas transcrita da folha da oficina · constantes 2 · 2,33 · 10′ · 75 editáveis.<br>
-  Valide contra peça boa conhecida antes de liberar lote.
-</footer>
 </div>
 
 <script>
@@ -193,29 +183,24 @@ function calcularEnvolvente(Z,delta,c){          // Z ÷ 75 ÷ sen δ  (razão, 
 /* ===== FORMATAÇÃO ===== */
 const fd=(v,d)=>v==null||isNaN(v)||!isFinite(v)?'—':(+v).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
 
-/* ===== EXEMPLO DA FOLHA p/ conferência (calculado pela Z15) ===== */
-const FOLHA_1540={prim:'20°33′',ext:'23°13′',int:'17°23′'};
-
 /* Monta o bloco de uma engrenagem */
-function blocoEngrenagem(Z,Zpar,c,mostrarFolha){
+function blocoEngrenagem(Z,Zpar,c){
   const delta=calcularAnguloPrimitivo(Z,Zpar);
   const ext=calcularAnguloExterno(delta,Z,c);
   const int_=calcularAnguloInterno(delta,Z,c);
   const abe=calcularAberturaFacao(delta,int_,c);
   const env=calcularEnvolvente(Z,delta,c);
 
-  const flag=k=>mostrarFolha?` <span class="lcd-flag">folha: ${FOLHA_1540[k]}</span>`:'';
   let h='';
   const row=(k,v,u,extra)=>h+=`<div class="lcd-row"><span class="lcd-k">${k}${extra||''}</span><span class="lcd-v">${v}${u?`<span class="lcd-u">${u}</span>`:''}</span></div>`;
 
-  row('∠ Primitivo δ',grausParaGMS(delta),fd(delta,4)+'°',flag('prim'));
-  row('∠ Externo',grausParaGMS(ext),fd(ext,4)+'°',flag('ext'));
-  row('∠ Interno',grausParaGMS(int_),fd(int_,4)+'°',flag('int'));
+  row('∠ Primitivo δ',grausParaGMS(delta),fd(delta,4)+'°');
+  row('∠ Externo',grausParaGMS(ext),fd(ext,4)+'°');
+  row('∠ Interno',grausParaGMS(int_),fd(int_,4)+'°');
   row('Abertura dos facões',grausParaGMS(abe),fd(abe,4)+'°');
   row('Envolvente Z÷'+fd(c.maq,0)+'÷sen δ',fd(env,5),'razão');
 
   let nota='';
-  if(mostrarFolha)nota+='Interno diverge 3′ da folha — as teclas da própria folha dão '+grausParaGMS(int_).slice(0,7)+'; confirme em peça boa.';
   if(Z<13)nota+=' ⚠ Z<13 — risco de interferência.';
   return h+(nota?'<div class="lcd-note">'+nota+'</div>':'');
 }
@@ -239,13 +224,11 @@ function calcular(){
     return;
   }
 
-  const eh1540=(Math.min(z1,z2)===15&&Math.max(z1,z2)===40)&&!alterado;
-
   /* Bloco A = engrenagem Z1 · Bloco B = engrenagem Z2, cada uma com seu Z e seu δ */
   lblA.textContent='Engrenagem Z'+z1+(z1===z2?'':(z1<z2?' (menor)':' (maior)'));
   lblB.textContent='Engrenagem Z'+z2+(z1===z2?'':(z2<z1?' (menor)':' (maior)'));
-  lcdA.innerHTML=blocoEngrenagem(z1,z2,c,eh1540&&z1===15);
-  lcdB.innerHTML=blocoEngrenagem(z2,z1,c,eh1540&&z2===15);
+  lcdA.innerHTML=blocoEngrenagem(z1,z2,c);
+  lcdB.innerHTML=blocoEngrenagem(z2,z1,c);
 }
 
 ['z1','z2','k-ext','k-int','k-ali','k-maq'].forEach(id=>
