@@ -213,6 +213,11 @@ function blocoEngrenagem(Z,Zpar,c,mostrarFolha){
   row('∠ Interno',grausParaGMS(int_),fd(int_,4)+'°',flag('int'));
   row('Abertura dos facões',grausParaGMS(abe),fd(abe,4)+'°');
   row('Envolvente Z÷'+fd(c.maq,0)+'÷sen δ',fd(env,5),'razão');
+
+  let nota='';
+  if(mostrarFolha)nota+='Interno diverge 3′ da folha — as teclas da própria folha dão '+grausParaGMS(int_).slice(0,7)+'; confirme em peça boa.';
+  if(Z<13)nota+=' ⚠ Z<13 — risco de interferência.';
+  return h+(nota?'<div class="lcd-note">'+nota+'</div>':'');
 }
 
 function calcular(){
